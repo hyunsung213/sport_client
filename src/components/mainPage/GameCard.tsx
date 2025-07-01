@@ -1,0 +1,129 @@
+"use client";
+
+import { getGameDetail, getGameDetailByDate } from "@/utils/get";
+import { GameDetail } from "@/utils/interface/game";
+import { DateTime } from "luxon";
+import { useEffect, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+
+export interface DateFilter {
+  startDate: string;
+  endDate: string;
+}
+
+export default function GameCard() {
+  const [games, setGames] = useState<GameDetail[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const now = new Date();
+  const pad = (n: any) => n.toString().padStart(2, "0");
+
+  const formattedNow = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(
+    now.getDate()
+  )}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+  // const [startDate, setStartDate] = useState(formattedNow);
+  const [startDate, setStartDate] = useState("2025-06-30T00:00");
+
+  // const [endDate, setEndDate] = useState(formattedNow);
+  const [endDate, setEndDate] = useState("2025-07-02T23:59");
+
+  const getDateFilter = (): DateFilter => {
+    return { startDate: startDate, endDate: endDate };
+  };
+
+  const fetchGames = async () => {
+    setLoading(true);
+    try {
+      const dateFilter = getDateFilter();
+      const result = await getGameDetailByDate(dateFilter);
+      console.log(result);
+      setGames(result || []);
+    } catch (err) {
+      console.error(err);
+      setError("게임 데이터를 불러오는 중 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getPhotoByURL = (photoUrl: string) => {
+    return `${process.env.NEXT_PUBLIC_API_URL}${photoUrl}`;
+  };
+
+  useEffect(() => {
+    fetchGames();
+  }, []);
+
+  return (
+    <div className="flex items-center justify-center w-full overflow-visible">
+      <Carousel className="w-full max-w-4xl overflow-visible">
+        <CarouselContent className="-ml-2 overflow-visible">
+          {games.map((game) => (
+            <CarouselItem
+              key={game.gameId}
+              className="p-2 overflow-visible md:basis-1/2 lg:basis-1/3"
+            >
+              <div className="overflow-visible">
+                <Card className="flex flex-col w-full p-0 m-0 overflow-hidden transition-transform shadow-lg hover:scale-105">
+                  {/* 이미지 영역: 카드 최상단에 딱 붙임 */}
+                  <div className="w-full overflow-hidden h-50">
+                    <img
+                      src={
+                        game.Place?.Photos && game.Place.Photos.length > 0
+                          ? getPhotoByURL(game.Place.Photos[0].photoUrl)
+                          : "https://via.placeholder.com/300x200?text=No+Image"
+                      }
+                      alt={game.Place?.placeName || "장소 이미지"}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+
+                  {/* 텍스트 정보 */}
+                  <CardContent className="flex flex-col p-4 space-y-1">
+                    <div className="flex justify-between text-xs text-gray-400">
+                      <span>{game.Place.location}</span>
+                    </div>
+
+                    <h3 className="text-xl font-bold text-start">
+                      {game.Place?.placeName || "장소 정보 없음"}
+                    </h3>
+
+                    <div className="flex justify-between text-sm text-gray-600">
+                      <span>
+                        {new Date(game.date).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="font-bold text-red-500">
+                        {game.Users?.length || 0}
+                      </span>
+                      <span className="text-gray-500">
+                        / {game.numOfMember} 명
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
+    </div>
+  );
+}
