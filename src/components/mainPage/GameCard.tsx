@@ -73,7 +73,7 @@ export default function GameCard() {
               className="p-2 overflow-visible md:basis-1/2 lg:basis-1/3"
             >
               <div className="overflow-visible">
-                <Card className="flex flex-col w-full p-0 m-0 overflow-hidden transition-transform shadow-lg hover:scale-105">
+                <Card className="flex flex-col w-full max-w-xs p-0 m-0 mx-auto overflow-hidden transition-transform shadow-lg hover:scale-105">
                   {/* 이미지 영역: 카드 최상단에 딱 붙임 */}
                   <div className="w-full overflow-hidden h-50">
                     <img
