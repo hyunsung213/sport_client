@@ -1,7 +1,7 @@
 "use client";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function DateSelector({
   setSelectDate,
@@ -9,49 +9,50 @@ export default function DateSelector({
   setSelectDate: (date: string) => void;
 }) {
   const today = new Date();
-  const [date, setDate] = useState(today);
+  const [selectedDate, setSelectedDate] = useState<string>("");
+
+  const daysKor = ["일", "월", "화", "수", "목", "금", "토"];
 
   return (
-    <Tabs defaultValue="" className="w-400px">
-      <TabsList>
-        {[...Array(9)].map((_, i) => {
-          const newDate = new Date(date);
-          newDate.setDate(date.getDate() + i);
-          const days = ["일", "월", "화", "수", "목", "금", "토"];
-          const dayOfWeek = days[newDate.getDay()];
-          const formattedDate = `${String(newDate.getMonth() + 1).padStart(
-            2,
-            "0"
-          )}-${String(newDate.getDate()).padStart(2, "0")} (${dayOfWeek})`;
+    <div
+      className="flex items-center justify-center w-full gap-10 px-4 py-2 rounded-full"
+      style={{ backgroundColor: "#e5f3fb" }}
+    >
+      {Array.from({ length: 9 }, (_, i) => {
+        const newDate = new Date(today);
+        newDate.setDate(today.getDate() + i);
 
-          return (
-            <TabsTrigger
-              key={formattedDate}
-              value={formattedDate}
-              onClick={() => setSelectDate(formattedDate)}
-            >
-              {formattedDate}
-            </TabsTrigger>
-          );
-        })}
-      </TabsList>
+        const day = daysKor[newDate.getDay()];
+        const dateNum = newDate.getDate();
+        const formattedDate = `${newDate.getFullYear()}-${String(
+          newDate.getMonth() + 1
+        ).padStart(2, "0")}-${String(dateNum).padStart(2, "0")}`;
 
-      {[...Array(9)].map((_, i) => {
-        const newDate = new Date(date);
-        newDate.setDate(date.getDate() + i);
-        const days = ["일", "월", "화", "수", "목", "금", "토"];
-        const dayOfWeek = days[newDate.getDay()];
-        const formattedDate = `${String(newDate.getMonth() + 1).padStart(
-          2,
-          "0"
-        )}-${String(newDate.getDate()).padStart(2, "0")} (${dayOfWeek})`;
+        const isSelected = selectedDate === formattedDate;
+        const isSaturday = newDate.getDay() === 6;
+        const isSunday = newDate.getDay() === 0;
 
         return (
-          <TabsContent key={formattedDate} value={formattedDate}>
-            {/* 필요한 콘텐츠 넣기 */}
-          </TabsContent>
+          <div key={i} className="flex flex-col items-center w-12">
+            <Button
+              variant={isSelected ? "default" : "ghost"}
+              className={`w-12 h-12 rounded-full flex flex-col items-center justify-center ${
+                isSaturday ? "text-blue-500" : isSunday ? "text-red-500" : ""
+              }`}
+              style={
+                isSelected ? { backgroundColor: "#b6e9f9", color: "#000" } : {}
+              }
+              onClick={() => {
+                setSelectedDate(formattedDate); // 내부 상태 업데이트
+                setSelectDate(formattedDate); // 상위로 값 전달
+              }}
+            >
+              <span className="font-bold">{dateNum}</span>
+              <span className="text-xs">{day}</span>
+            </Button>
+          </div>
         );
       })}
-    </Tabs>
+    </div>
   );
 }

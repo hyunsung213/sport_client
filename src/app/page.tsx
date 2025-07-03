@@ -9,27 +9,13 @@ export default function Home() {
   const [selectDate, setSelectDate] = useState<string>("");
 
   return (
-    <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "50vh",
-        }}
-      >
+    <div className="relative h-screen">
+      <div className="relative z-20 flex items-center justify-center ">
         <GameCard />
       </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "50vh",
-        }}
-      >
-        <DateSelector setSelectDate={setSelectDate} />
-        <GameList selectDate={selectDate} />
+
+      <div className="relative z-10 flex flex-col items-center justify-center h-1/2">
+        <GameList />
       </div>
     </div>
   );

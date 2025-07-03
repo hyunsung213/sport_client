@@ -4,6 +4,7 @@ export interface District {
 }
 
 export const seoulDistricts: District[] = [
+  { name: "서울전체", address: "서울특별시" },
   { name: "종로구", address: "서울특별시 종로구" },
   { name: "중구", address: "서울특별시 중구" },
   { name: "용산구", address: "서울특별시 용산구" },

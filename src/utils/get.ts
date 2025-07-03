@@ -1,5 +1,5 @@
 import apiClient from "./api";
-import { GameDetail } from "./interface/game";
+import { GameDetail, InterestedGame } from "./interface/game";
 
 export interface DateFilter {
   startDate: string;
@@ -32,5 +32,14 @@ export async function getGameDetailByDate(data: DateFilter) {
     return response.data;
   } catch (error) {
     console.log("날짜별로 GameDetail을 가져오는데 실패했습니다!: ", error);
+  }
+}
+
+export async function getInterestGameDetail() {
+  try {
+    const response = await apiClient.get<InterestedGame[]>(`/interests/my`);
+    return response.data;
+  } catch (error) {
+    console.log("관심 게임을 가져오는데 실패했습니다!: ", error);
   }
 }

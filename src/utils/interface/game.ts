@@ -20,3 +20,9 @@ export interface GameDetail {
   Place: PlaceDetail;
   Users: User[];
 }
+
+export interface InterestedGame {
+  gameId: number;
+  userId: number;
+  Game: GameDetail;
+}
