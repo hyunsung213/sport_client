@@ -1,3 +1,4 @@
+import { Note } from "./note";
 import { Option } from "./option";
 import { Photo } from "./photo";
 import { User } from "./user";
@@ -15,6 +16,7 @@ export interface PlaceDetail {
   location: string;
   mangerId: string;
   user: User;
-  option: Option;
+  Option: Option;
+  Note: Note;
   Photos: Photo[];
 }

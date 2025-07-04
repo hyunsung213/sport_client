@@ -12,6 +12,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { useRouter } from "next/navigation";
 
 export interface DateFilter {
   startDate: string;
@@ -19,6 +20,7 @@ export interface DateFilter {
 }
 
 export default function GameCard() {
+  const router = useRouter();
   const [games, setGames] = useState<GameDetail[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -30,16 +32,23 @@ export default function GameCard() {
     now.getDate()
   )}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
 
+  //Game 상세 페이지로 이동하는 함수
+  const goToGameDetail = (gameId: number) => {
+    router.push(`/game/${gameId}`);
+  };
+
   // const [startDate, setStartDate] = useState(formattedNow);
   const [startDate, setStartDate] = useState("2025-07-02T00:00");
 
   // const [endDate, setEndDate] = useState(formattedNow);
   const [endDate, setEndDate] = useState("2025-07-03T23:59");
 
+  // 날짜 필터를 적용하기 위한 함수
   const getDateFilter = (): DateFilter => {
     return { startDate: startDate, endDate: endDate };
   };
 
+  // 게임 데이터를 불러오는 함수
   const fetchGames = async () => {
     setLoading(true);
     try {
@@ -55,6 +64,7 @@ export default function GameCard() {
     }
   };
 
+  // 사진 URL로 사진 불러오기
   const getPhotoByURL = (photoUrl: string) => {
     return `${process.env.NEXT_PUBLIC_API_URL}${photoUrl}`;
   };
@@ -69,7 +79,12 @@ export default function GameCard() {
         <CarouselContent className="">
           {games.map((game) => (
             <CarouselItem key={game.gameId} className="p-2 basis-1/3">
-              <Card className="flex flex-col w-full p-0 m-0 mx-auto overflow-hidden transition-transform shadow-lg hover:scale-105">
+              <Card
+                className="flex flex-col w-full p-0 m-0 mx-auto overflow-hidden transition-transform shadow-lg cursor-pointer hover:scale-105"
+                onClick={() => {
+                  goToGameDetail(game.gameId);
+                }}
+              >
                 <div className="w-full h-50">
                   <img
                     src={

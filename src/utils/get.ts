@@ -17,7 +17,7 @@ export async function getAllGameDetail() {
 
 export async function getGameDetail(gameId: number) {
   try {
-    const response = await apiClient.get<GameDetail>(`/games/:id/${gameId}`);
+    const response = await apiClient.get<GameDetail>(`/games/${gameId}`);
     return response.data;
   } catch (error) {
     console.log("GameDetail을 가져오는데 실패했습니다!: ", error);

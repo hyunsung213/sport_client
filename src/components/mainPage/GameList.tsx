@@ -19,11 +19,12 @@ import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { is } from "date-fns/locale";
 import { deleteInterestGame } from "@/utils/delete";
 import { postInterestGame } from "@/utils/post";
+import { useRouter } from "next/navigation";
 
 export default function GameList() {
   const today = new Date();
   const daysKor = ["일", "월", "화", "수", "목", "금", "토"];
-
+  const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [games, setGames] = useState<GameDetail[]>([]);
   const [selectDistrict, setSelectDistrict] = useState<string>("");
@@ -32,6 +33,12 @@ export default function GameList() {
   const [selectedGameId, setSelectedGameId] = useState<number | null>(null);
   const [interestGames, setInterestGames] = useState<InterestedGame[]>([]);
 
+  //Game 상세 페이지로 이동하는 함수
+  const goToGameDetail = (gameId: number) => {
+    router.push(`/game/${gameId}`);
+  };
+
+  // GameList 불러오기
   const fetchGames = async () => {
     setLoading(true);
     try {
@@ -49,10 +56,6 @@ export default function GameList() {
     }
   };
 
-  useEffect(() => {
-    fetchGames();
-  }, []);
-
   // 날짜, 지역구 기준으로 Game 필터링
   const filteredGames = games.filter(
     (game) =>
@@ -65,6 +68,7 @@ export default function GameList() {
     return interestGames.some((game) => game.gameId === gameId);
   };
 
+  // 관심 게임 토글 함수 - 관심 게임 등록/해제
   const toggleLike = async (gameId: number) => {
     if (isInterestedGame(gameId)) {
       await deleteInterestGame(gameId); // 서버 요청
@@ -74,6 +78,10 @@ export default function GameList() {
       await fetchGames(); // 관심 게임 목록 새로고침
     }
   };
+
+  useEffect(() => {
+    fetchGames();
+  }, []);
 
   return (
     <div className="flex flex-col gap-4">
@@ -142,7 +150,6 @@ export default function GameList() {
         <div className="flex flex-col gap-2 mt-4">
           {filteredGames.map((game, idx) => {
             const gameTime = game.date.slice(11, 16); // 시간만 추출 (HH:mm)
-            const isSelected = selectedGameId === game.gameId;
             const isLiked = isInterestedGame(game.gameId); // 관심 게임 여부 확인
             const isOdd = idx % 2 === 0; // 0부터 시작 → 0, 2, 4... 홀수 번째로 인식
             return (
@@ -152,7 +159,7 @@ export default function GameList() {
                 style={{
                   backgroundColor: isOdd ? "#e5f3fb" : "#ffffff",
                 }}
-                onClick={() => setSelectedGameId(game.gameId)}
+                onClick={() => goToGameDetail(game.gameId)}
               >
                 <div className="w-16 font-bold text-left">{gameTime}</div>
 
