@@ -1,11 +1,12 @@
 import { PlaceDetail } from "./place";
-import { User } from "./user";
+import { User, UserDetail } from "./user";
 
 export interface Game {
   gameId: number;
   placeId: number;
   date: string;
   numOfMember: number;
+  cost: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -15,10 +16,11 @@ export interface GameDetail {
   placeId: number;
   date: string;
   numOfMember: number;
+  cost: number;
   createdAt: string;
   updatedAt: string;
   Place: PlaceDetail;
-  Users: User[];
+  Users: UserDetail[];
 }
 
 export interface InterestedGame {

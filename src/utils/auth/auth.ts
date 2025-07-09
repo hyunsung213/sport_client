@@ -25,3 +25,12 @@ export async function signUp(data: form) {
     console.log("로그인에 실패했습니다. ", error);
   }
 }
+
+export async function logout() {
+  try {
+    const response = await apiClient.post("/auth/logout");
+    return response.data;
+  } catch (error) {
+    console.log("로그아웃에 실패했습니다. ", error);
+  }
+}

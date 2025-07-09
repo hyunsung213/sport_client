@@ -1,7 +1,7 @@
 import { Note } from "./note";
 import { Option } from "./option";
 import { Photo } from "./photo";
-import { User } from "./user";
+import { User, UserDetail } from "./user";
 
 export interface Place {
   placeId: number;
@@ -15,7 +15,7 @@ export interface PlaceDetail {
   placeName: string;
   location: string;
   mangerId: string;
-  user: User;
+  user: UserDetail;
   Option: Option;
   Note: Note;
   Photos: Photo[];

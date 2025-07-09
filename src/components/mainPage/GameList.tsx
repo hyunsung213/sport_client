@@ -25,7 +25,17 @@ export default function GameList() {
   const today = new Date();
   const daysKor = ["일", "월", "화", "수", "목", "금", "토"];
   const router = useRouter();
-  const [selectedDate, setSelectedDate] = useState<string>("");
+
+  // ✅ 오늘 날짜 포맷 함수
+  const getFormattedToday = () => {
+    return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}-${String(today.getDate()).padStart(2, "0")}`;
+  };
+
+  // ✅ 오늘 날짜로 초기화
+  const [selectedDate, setSelectedDate] = useState<string>(getFormattedToday());
   const [games, setGames] = useState<GameDetail[]>([]);
   const [selectDistrict, setSelectDistrict] = useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -84,13 +94,13 @@ export default function GameList() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col max-w-5xl gap-4">
       {/* 날짜 선택 */}
       <div
-        className="flex items-center justify-center w-full gap-10 px-4 py-2 rounded-full"
+        className="flex items-center justify-center w-full gap-12 px-6 py-2 rounded-full"
         style={{ backgroundColor: "#e5f3fb" }}
       >
-        {Array.from({ length: 9 }, (_, i) => {
+        {Array.from({ length: 10 }, (_, i) => {
           const newDate = new Date(today);
           newDate.setDate(today.getDate() + i);
 

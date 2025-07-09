@@ -74,8 +74,8 @@ export default function GameCard() {
   }, []);
 
   return (
-    <div className="flex items-center justify-center w-full">
-      <Carousel className="w-full max-w-4xl">
+    <div className="flex items-center justify-center max-w-5xl">
+      <Carousel className="w-full">
         <CarouselContent className="">
           {games.map((game) => (
             <CarouselItem key={game.gameId} className="p-2 basis-1/3">

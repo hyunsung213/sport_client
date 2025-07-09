@@ -19,6 +19,15 @@ import { postInterestGame } from "@/utils/post";
 import { set } from "date-fns";
 import { is } from "date-fns/locale";
 import GameInfoCard from "@/components/detailPage/GameInfoCard";
+import { FaRegCopy } from "react-icons/fa";
+import LocationMap from "@/components/detailPage/LocationMap";
+import RateCard from "@/components/detailPage/RateCard";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Props {
   params: Promise<{ gameId: string }>;
@@ -33,6 +42,7 @@ export default function GameDetailPage() {
   const [game, setGame] = useState<GameDetail>();
   const [interestGames, setInterestGames] = useState<InterestedGame[]>([]);
   const [isLiked, setIsLiked] = useState(false);
+  const [open, setOpen] = useState(false);
 
   // GameList 불러오기
   const fetchGames = async () => {
@@ -102,101 +112,113 @@ export default function GameDetailPage() {
     isInterestedGame(gameId);
   }, [interestGames]);
 
-  return (
-    <div className="max-w-6xl p-4 space-y-6">
-      {/* 상단 이미지 영역 */}
-      <div className="grid grid-cols-4 gap-4">
-        <div className="col-span-2">
-          <img
-            src={
-              game?.Place?.Photos?.length
-                ? getPhotoByURL(game.Place.Photos[0].photoUrl)
-                : "https://via.placeholder.com/300x200?text=No+Image"
-            }
-            alt={game?.Place?.placeName || "장소 이미지"}
-            className="object-cover w-full h-full"
-          />
-        </div>
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-row gap-4">
-            <img
-              src={
-                game?.Place?.Photos?.length
-                  ? getPhotoByURL(game.Place.Photos[0].photoUrl)
-                  : "https://via.placeholder.com/300x200?text=No+Image"
-              }
-              alt={game?.Place?.placeName || "장소 이미지"}
-              className="object-cover w-full h-full"
-            />
-            <img
-              src={
-                game?.Place?.Photos?.length
-                  ? getPhotoByURL(game.Place.Photos[0].photoUrl)
-                  : "https://via.placeholder.com/300x200?text=No+Image"
-              }
-              alt={game?.Place?.placeName || "장소 이미지"}
-              className="object-cover w-full h-full"
-            />
-          </div>
-          <div className="flex flex-row gap-4">
-            <img
-              src={
-                game?.Place?.Photos?.length
-                  ? getPhotoByURL(game.Place.Photos[0].photoUrl)
-                  : "https://via.placeholder.com/300x200?text=No+Image"
-              }
-              alt={game?.Place?.placeName || "장소 이미지"}
-              className="object-cover w-full h-full"
-            />
-            <img
-              src={
-                game?.Place?.Photos?.length
-                  ? getPhotoByURL(game.Place.Photos[0].photoUrl)
-                  : "https://via.placeholder.com/300x200?text=No+Image"
-              }
-              alt={game?.Place?.placeName || "장소 이미지"}
-              className="object-cover w-full h-full"
-            />
-          </div>
-        </div>
-      </div>
+  const images =
+    game?.Place?.Photos?.map((photo) => getPhotoByURL(photo.photoUrl)) ?? [];
+  const fallback = "https://via.placeholder.com/300x200?text=No+Image";
 
-      {/* 장소 및 정보 */}
-      <div className="flex items-start justify-between">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-bold">{game?.Place?.placeName}</h1>
-          <p className="text-gray-500">{game?.Place?.location}</p>
+  return (
+    <div className="max-w-5xl p-4 space-y-6">
+      <Dialog open={open} onOpenChange={setOpen}>
+        {/* 상단 이미지 영역 */}
+        <div
+          className="grid grid-cols-4 gap-4 p-4 overflow-hidden bg-white border border-gray-200 shadow-sm cursor-pointer rounded-xl"
+          onClick={() => setOpen(true)}
+        >
+          <div className="col-span-2">
+            <img
+              src={images[0] || fallback}
+              alt={game?.Place?.placeName || "장소 이미지"}
+              className="object-cover w-full h-full rounded-lg"
+            />
+          </div>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-row gap-4">
+              <img
+                src={images[0] || fallback}
+                className="object-cover w-full h-full rounded-lg"
+              />
+              <img
+                src={images[0] || fallback}
+                className="object-cover w-full h-full rounded-lg"
+              />
+            </div>
+            <div className="flex flex-row gap-4">
+              <img
+                src={images[0] || fallback}
+                className="object-cover w-full h-full rounded-lg"
+              />
+              <img
+                src={images[0] || fallback}
+                className="object-cover w-full h-full rounded-lg"
+              />
+            </div>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => handleCopyUrl()}>
-            {<FiShare />}
-          </Button>
-          <Button variant="outline" onClick={() => toggleLike(gameId)}>
-            {isLiked ? (
-              <FaHeart className="text-red-500" />
+
+        {/* 모달 안 전체 이미지 리스트 */}
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+          <DialogTitle>전체 이미지 보기</DialogTitle>
+          <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
+            {images.length > 0 ? (
+              images.map((src, i) => (
+                <img
+                  key={i}
+                  src={src}
+                  alt={`gallery-${i}`}
+                  className="object-contain w-full rounded-lg"
+                />
+              ))
             ) : (
-              <FaRegHeart className="text-gray-400" />
+              <p className="text-gray-400">이미지가 없습니다.</p>
             )}
-          </Button>
-        </div>
-      </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* 게임 정보 카드 */}
       <div className="flex gap-6">
-        <div className="flex-1 space-y-4">
+        <div className="space-y-4 flex-2">
+          {/* 장소 정보 */}
+          <div className="space-y-1">
+            <h1 className="text-2xl font-semibold">{game?.Place?.placeName}</h1>
+            <p className="text-sm text-gray-500">{game?.Place?.location}</p>
+          </div>
           <div className="my-2 border-t border-blue-400" /> {/* 구분선 */}
           {/* 편의시설 & 상세 정보 */}
           <PlaceOptionCard option={game?.Place?.Option || PlaceBasicOption} />
           <div className="my-2 border-t border-blue-400" /> {/* 구분선 */}
+          <RateCard users={game?.Users || []} />
+          <div className="my-2 border-t border-blue-400" /> {/* 구분선 */}
           <PlaceNoteCard note={game?.Place?.Note || PlaceBasicNote} />
           <div className="my-2 border-t border-blue-400" /> {/* 구분선 */}
-          <div className="space-y-2">
-            <h2 className="text-lg font-semibold">주소</h2>
-            <p>서울시 마포구 도림동 50-1</p>
-          </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="sticky self-start flex-1 space-y-4 top-24">
+          {/* 우측 아이콘 버튼 */}
+          <div className="flex items-center justify-end gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="border-gray-300 hover:bg-gray-100"
+              onClick={() => handleCopyUrl()}
+            >
+              <FiShare className="text-gray-600" />
+            </Button>
+
+            <Button
+              variant="outline"
+              size="icon"
+              className="border-gray-300 hover:bg-gray-100"
+              onClick={() => toggleLike(gameId)}
+            >
+              {isLiked ? (
+                <FaHeart className="text-red-500" />
+              ) : (
+                <FaRegHeart className="text-gray-400" />
+              )}
+            </Button>
+          </div>
+          {/* 인기 게임 카드 */}
           <HotGameCard />
           {/* 우측 정보 카드 */}
           <GameInfoCard game={game} />
@@ -205,10 +227,7 @@ export default function GameDetailPage() {
 
       {/* 지도 영역 */}
       <div>
-        <h2 className="mb-2 text-lg font-semibold">위치</h2>
-        <div className="flex items-center justify-center w-full text-gray-500 bg-gray-200 h-80 rounded-xl">
-          지도 영역 (지도 연동 예정)
-        </div>
+        <LocationMap address={game?.Place?.location || ""} />
       </div>
     </div>
   );
