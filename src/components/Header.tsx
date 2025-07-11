@@ -47,6 +47,21 @@ export default function Header() {
     router.push(`/myPage/`);
   };
 
+  //Manage 페이지로 이동하는 함수
+  const goToManagePage = () => {
+    router.push(`/managePage/calendar`);
+  };
+
+  //SuperManage 페이지로 이동하는 함수
+  const goToSuperManagePage = () => {
+    router.push(`/supermanagePage/makeGame`);
+  };
+
+  //Main 페이지로 이동하는 함수
+  const goToMainPage = () => {
+    router.push(`/`);
+  };
+
   useEffect(() => {
     const fetchAll = async () => {
       await fetchSession();
@@ -59,31 +74,41 @@ export default function Header() {
       {/* 왼쪽 로고 */}
       <div className="flex items-center space-x-2">
         {/* <Image src="/logo.png" alt="로고" width={28} height={28} /> */}
-        <span className="text-xl font-bold">MyApp</span>
+        <span
+          onClick={() => goToMainPage()}
+          className="text-xl font-bold cursor-pointer"
+        >
+          MyApp
+        </span>
       </div>
 
       {/* 우측 사용자 아이콘 */}
       <div className="flex items-center space-x-4">
         {session?.isManager && (
           <>
-            <GrUserManager
-              size={28}
-              className="text-gray-600 cursor-pointer"
-              onClick={() => goToMyPage()}
-            />
+            <Button
+              variant="outline"
+              className="text-sm font-medium"
+              onClick={goToManagePage}
+            >
+              내 장소관리
+            </Button>
+
             {session?.isSuperManager && (
-              <GiSuperMushroom
-                size={28}
-                className="text-gray-600 cursor-pointer"
-                onClick={() => goToMyPage()}
-              />
+              <Button
+                variant="default"
+                className="text-sm font-medium"
+                onClick={goToSuperManagePage}
+              >
+                게임 만들기
+              </Button>
             )}
           </>
         )}
         <FaUserCircle
           size={28}
           className="text-gray-600 cursor-pointer"
-          onClick={() => goToMyPage()}
+          onClick={goToMyPage}
         />
         <Button onClick={fetchLogout} className="text-red-600">
           로그아웃

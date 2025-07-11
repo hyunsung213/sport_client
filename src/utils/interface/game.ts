@@ -11,6 +11,13 @@ export interface Game {
   updatedAt: string;
 }
 
+export interface IGame {
+  placeId: number;
+  date: string;
+  numOfMember: number;
+  cost: number;
+}
+
 export interface GameDetail {
   gameId: number;
   placeId: number;

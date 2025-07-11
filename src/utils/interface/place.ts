@@ -1,3 +1,4 @@
+import { Game } from "./game";
 import { Note } from "./note";
 import { Option } from "./option";
 import { Photo } from "./photo";
@@ -15,8 +16,20 @@ export interface PlaceDetail {
   placeName: string;
   location: string;
   mangerId: string;
-  user: UserDetail;
+  User: UserDetail;
   Option: Option;
   Note: Note;
   Photos: Photo[];
+}
+
+export interface PlaceDetailWithGames {
+  placeId: number;
+  placeName: string;
+  location: string;
+  mangerId: string;
+  User: UserDetail;
+  Option: Option;
+  Note: Note;
+  Photos: Photo[];
+  Games: Game[];
 }

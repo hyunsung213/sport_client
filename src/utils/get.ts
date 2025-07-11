@@ -1,5 +1,6 @@
 import apiClient from "./api";
 import { GameDetail, InterestedGame } from "./interface/game";
+import { PlaceDetail, PlaceDetailWithGames } from "./interface/place";
 import { Session, UserDetail } from "./interface/user";
 
 export interface DateFilter {
@@ -66,5 +67,25 @@ export async function getSession() {
     return response.data;
   } catch (error) {
     console.log("세션 정보를 가져오는데 실패했습니다!: ", error);
+  }
+}
+
+// manage 장소 세부 정보 가져오기
+export async function getPlaceDetail() {
+  try {
+    const response = await apiClient.get<PlaceDetailWithGames[]>(`/Places/my`);
+    return response.data;
+  } catch (error) {
+    console.log("장소 세부 정보를 가져오는데 실패했습니다!: ", error);
+  }
+}
+
+// supermanage 장소 세부 정보 가져오기
+export async function getAllPlaceDetail() {
+  try {
+    const response = await apiClient.get<PlaceDetailWithGames[]>(`/Places/`);
+    return response.data;
+  } catch (error) {
+    console.log("장소 세부 정보를 가져오는데 실패했습니다!: ", error);
   }
 }
