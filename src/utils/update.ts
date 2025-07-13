@@ -6,7 +6,7 @@ import { Place, PlaceDetail } from "./interface/place";
 // 장소 디테일 수정
 export async function updatePlaceDetail(updateData: Partial<PlaceDetail>) {
   try {
-    const { placeId, placeName, location, mangerId, user, Option, Note } =
+    const { placeId, placeName, location, managerId, User, Option, Note } =
       updateData;
 
     // 필수 ID 체크
@@ -20,8 +20,8 @@ export async function updatePlaceDetail(updateData: Partial<PlaceDetail>) {
     const updatePlace = {
       ...(placeName && { placeName }),
       ...(location && { location }),
-      ...(mangerId && { mangerId }),
-      ...(user && { user }),
+      ...(managerId && { managerId }),
+      ...(User && { User }),
     };
 
     const results = await Promise.allSettled([

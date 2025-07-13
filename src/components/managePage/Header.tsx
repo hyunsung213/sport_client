@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { MdAddLocation } from "react-icons/md";
 
 const navItems = [
   {
@@ -33,6 +34,11 @@ const navItems = [
     label: "Images",
     icon: <LuImageUp size={24} />,
     href: "/managePage/updateImages",
+  },
+  {
+    label: "Add",
+    icon: <MdAddLocation size={24} />,
+    href: "/managePage/addPlace",
   },
 ];
 

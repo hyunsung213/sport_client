@@ -2,6 +2,7 @@ import "./globals.css";
 import { ReactNode } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { SessionProvider } from "@/context/SessionContext";
 
 export const metadata = {
   title: "스포츠 플랫폼",
@@ -11,11 +12,13 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ko">
-      <body className="flex flex-col items-center w-full min-h-screen">
-        <Header />
-        <div>{children}</div>
-        <Footer />
-      </body>
+      <SessionProvider>
+        <body className="flex flex-col items-center w-full min-h-screen">
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </body>
+      </SessionProvider>
     </html>
   );
 }

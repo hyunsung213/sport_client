@@ -73,7 +73,14 @@ export default function updateImages() {
     }
   };
 
-  if (!selectedPlace) return <div>장소 정보를 불러오는 중입니다...</div>;
+  if (!selectedPlace)
+    return (
+      <div className="flex items-center justify-center h-96">
+        <span className="text-lg text-pastel-blue">
+          장소를 선택해주시기 바랍니다
+        </span>
+      </div>
+    );
 
   return (
     <div className="p-10 mx-auto mt-12 bg-white border shadow-lg w-4xl border-pastel-border rounded-3xl">

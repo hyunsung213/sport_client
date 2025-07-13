@@ -4,7 +4,6 @@ import { Rate } from "./rate";
 export interface User {
   userId: number;
   userName: string;
-  nickName: string;
   email: string;
   phoneNum: string;
   isManager: boolean;
@@ -13,7 +12,6 @@ export interface User {
 export interface UserDetail {
   userId: number;
   userName: string;
-  nickName: string;
   email: string;
   phoneNum: string;
   isManager: boolean;
@@ -22,7 +20,9 @@ export interface UserDetail {
 
 export interface Session {
   id: number;
+  userName: string;
   email: string;
   isManager: boolean;
   isSuperManager: boolean;
+  isSocial: boolean;
 }

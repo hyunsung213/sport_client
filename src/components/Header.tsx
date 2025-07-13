@@ -10,30 +10,17 @@ import { GrUserManager } from "react-icons/gr";
 import { GiSuperMushroom } from "react-icons/gi";
 import { Button } from "./ui/button";
 import { logout } from "@/utils/auth/auth";
+import { useSession } from "@/context/SessionContext";
 
 export default function Header() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [session, setSession] = useState<Session>();
-
-  const fetchSession = async () => {
-    setLoading(true);
-    try {
-      const res = await getSession();
-      console.log("세션 정보", res);
-      setSession(res);
-    } catch (err) {
-      console.error(err);
-      setError("세션 정보를 불러오는 중 오류가 발생했습니다.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { session, loading, refetchSession } = useSession();
 
   const fetchLogout = async () => {
     try {
       const res = await logout();
+      await refetchSession(); // 세션 초기화
       router.push(`/`);
       alert("로그아웃을 성공적으로 진행했습니다!");
     } catch (err) {
@@ -62,13 +49,6 @@ export default function Header() {
     router.push(`/`);
   };
 
-  useEffect(() => {
-    const fetchAll = async () => {
-      await fetchSession();
-    };
-    fetchAll();
-  }, []);
-
   return (
     <header className="flex items-center justify-between w-full h-16 border-b shadow-sm">
       {/* 왼쪽 로고 */}
@@ -84,35 +64,48 @@ export default function Header() {
 
       {/* 우측 사용자 아이콘 */}
       <div className="flex items-center space-x-4">
-        {session?.isManager && (
+        {session ? (
           <>
-            <Button
-              variant="outline"
-              className="text-sm font-medium"
-              onClick={goToManagePage}
-            >
-              내 장소관리
-            </Button>
+            {session.isManager && (
+              <>
+                <Button
+                  variant="outline"
+                  className="text-sm font-medium"
+                  onClick={goToManagePage}
+                >
+                  내 장소관리
+                </Button>
 
-            {session?.isSuperManager && (
-              <Button
-                variant="default"
-                className="text-sm font-medium"
-                onClick={goToSuperManagePage}
-              >
-                게임 만들기
-              </Button>
+                {session.isSuperManager && (
+                  <Button
+                    variant="default"
+                    className="text-sm font-medium"
+                    onClick={goToSuperManagePage}
+                  >
+                    게임 만들기
+                  </Button>
+                )}
+              </>
             )}
+
+            <FaUserCircle
+              size={28}
+              className="text-gray-600 cursor-pointer"
+              onClick={goToMyPage}
+            />
+            <Button onClick={fetchLogout} className="text-red-600">
+              로그아웃
+            </Button>
           </>
+        ) : (
+          <Button
+            onClick={() => router.push("/auth/login")}
+            variant="default"
+            className="text-blue-600"
+          >
+            로그인
+          </Button>
         )}
-        <FaUserCircle
-          size={28}
-          className="text-gray-600 cursor-pointer"
-          onClick={goToMyPage}
-        />
-        <Button onClick={fetchLogout} className="text-red-600">
-          로그아웃
-        </Button>
       </div>
     </header>
   );

@@ -89,6 +89,16 @@ export default function GameList() {
     }
   };
 
+  // 주소 구까지만 나타내기
+  // "구"까지만 추출하는 함수
+  const toDistrictOnly = (address: string) => {
+    if (!address) return "서울특별시";
+
+    // "중구", "강남구", "마포구" 등 "구"로 끝나는 단어 추출
+    const match = address.match(/([가-힣]+구)/);
+    return match ? match[0] : "서울특별시";
+  };
+
   useEffect(() => {
     fetchGames();
   }, []);
@@ -173,8 +183,12 @@ export default function GameList() {
               >
                 <div className="w-16 font-bold text-left">{gameTime}</div>
 
-                <div className="flex-1 text-sm text-left text-gray-700">
+                <div className="flex-1 text-sm text-left text-gray-800">
                   {game.Place.placeName}
+                </div>
+
+                <div className="text-sm text-left text-gray-500 flex-4">
+                  {toDistrictOnly(game.Place.location)}
                 </div>
 
                 <div className="w-20 text-sm text-right text-gray-600">

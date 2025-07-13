@@ -50,7 +50,7 @@ export default function EditPlacePage() {
     return (
       <div className="flex items-center justify-center h-96">
         <span className="text-lg text-pastel-blue">
-          장소 데이터를 불러오는 중입니다...
+          장소를 선택해주시기 바랍니다
         </span>
       </div>
     );

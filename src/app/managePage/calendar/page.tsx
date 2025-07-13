@@ -47,6 +47,15 @@ export default function ManagePage() {
     addDays(startOfSelectedWeek, i)
   );
 
+  if (!selectedPlace)
+    return (
+      <div className="flex items-center justify-center h-96">
+        <span className="text-lg text-pastel-blue">
+          장소를 선택해주시기 바랍니다
+        </span>
+      </div>
+    );
+
   return (
     <div className="flex flex-col h-screen px-4 pt-5 pb-5 w-6xl">
       <div className="flex flex-1 space-x-6">
