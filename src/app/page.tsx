@@ -1,28 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import apiClient from "@/utils/api";
+import GameCard from "@/components/mainPage/GameCard";
+import GameList from "@/components/mainPage/GameList";
+import { useState } from "react";
 
 export default function Home() {
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    apiClient
-      .get("/users")
-      .then((res) => setUsers(res.data))
-      .catch(console.error);
-  }, []);
+  const [selectDate, setSelectDate] = useState<string>("");
 
   return (
-    <div>
-      <h1>유저 목록</h1>
-      <ul>
-        {users.map((user: any) => (
-          <li key={user.userId}>
-            {user.userName} ({user.nickname})
-          </li>
-        ))}
-      </ul>
+    <div className="relative flex flex-col h-screen">
+      <h1 className="pt-4 pl-4 my-2 text-2xl font-bold text-start">
+        <span role="img" aria-label="fire">
+          🔥
+        </span>{" "}
+        오늘의 매치{" "}
+        <span role="img" aria-label="fire">
+          🔥
+        </span>
+      </h1>
+      <div className="relative z-20 flex items-center justify-center ">
+        <GameCard />
+      </div>
+      <div className="relative z-10 flex flex-col items-center justify-center">
+        <GameList />
+      </div>
     </div>
   );
 }
