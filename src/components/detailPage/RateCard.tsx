@@ -1,6 +1,6 @@
 "use client";
 
-import { LevelRanges, Rate } from "@/utils/interface/rate";
+import { getLevelFromRate, LevelRanges, Rate } from "@/utils/interface/rate";
 import { User, UserDetail } from "@/utils/interface/user";
 import { useState } from "react";
 import {
@@ -15,14 +15,6 @@ import {
 } from "recharts";
 
 export default function RateCard({ users }: { users: UserDetail[] }) {
-  const getLevelFromRate = (rate: number | null) => {
-    const safeRate = rate ?? 0;
-    const found = LevelRanges.find(
-      (range) => safeRate >= range.min && safeRate <= range.max
-    );
-    return found ? found.level : "알 수 없음";
-  };
-
   const countUsersByLevel = (users: UserDetail[]) => {
     const counts: Record<string, number> = {};
 
@@ -30,7 +22,7 @@ export default function RateCard({ users }: { users: UserDetail[] }) {
       const level = getLevelFromRate(user.Rate?.rateValue ?? 0);
       counts[level] = (counts[level] || 0) + 1;
     }
-
+    console.log(counts);
     return counts;
   };
 

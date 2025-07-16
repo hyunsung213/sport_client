@@ -2,7 +2,6 @@
 import { Note } from "@/utils/interface/note";
 
 export default function PlaceNoteCard({ note }: { note: Note }) {
-  console.log("PlaceNoteCard note: ", note);
   return (
     <div className="space-y-6 text-sm leading-relaxed text-gray-800">
       {/* 찾아가는 길 */}

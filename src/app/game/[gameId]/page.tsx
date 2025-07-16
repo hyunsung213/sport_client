@@ -187,7 +187,9 @@ export default function GameDetailPage() {
           {/* 편의시설 & 상세 정보 */}
           <PlaceOptionCard option={game?.Place?.Option || PlaceBasicOption} />
           <div className="my-2 border-t border-blue-400" /> {/* 구분선 */}
-          <RateCard users={game?.Users || []} />
+          {game?.Users && game.Users.length > 0 && (
+            <RateCard users={game.Users} />
+          )}
           <div className="my-2 border-t border-blue-400" /> {/* 구분선 */}
           <PlaceNoteCard note={game?.Place?.Note || PlaceBasicNote} />
           <div className="my-2 border-t border-blue-400" /> {/* 구분선 */}

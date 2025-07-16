@@ -1,7 +1,12 @@
 import apiClient from "./api";
-import { GameDetail, InterestedGame } from "./interface/game";
+import {
+  GameDetail,
+  GameDetailForSupporter,
+  InterestedGame,
+} from "./interface/game";
+import { ParticipationWithGame } from "./interface/participation";
 import { PlaceDetail, PlaceDetailWithGames } from "./interface/place";
-import { Session, UserDetail } from "./interface/user";
+import { Session, User, UserDetail } from "./interface/user";
 
 export interface DateFilter {
   startDate: string;
@@ -25,6 +30,19 @@ export async function getGameDetail(gameId: number) {
     return response.data;
   } catch (error) {
     console.log("GameDetail을 가져오는데 실패했습니다!: ", error);
+  }
+}
+
+// 서포터 관리 게임 디테일 정보 가져오기
+export async function getGameDetailForSupporter() {
+  try {
+    const response = await apiClient.get<GameDetailForSupporter[]>(
+      `/games/supporter/`
+    );
+    console.log("support: ", response);
+    return response.data;
+  } catch (error) {
+    console.log("서포터를 위한 GameDetail을 가져오는데 실패했습니다!: ", error);
   }
 }
 
@@ -60,6 +78,16 @@ export async function getUserDetail() {
   }
 }
 
+// 유저 디테일 정보 가져오기
+export async function getSupporters() {
+  try {
+    const response = await apiClient.get<User[]>(`/users/supporters/`);
+    return response.data;
+  } catch (error) {
+    console.log("서포터 정보를 가져오는데 실패했습니다!: ", error);
+  }
+}
+
 // 세션 정보 가져오기
 export async function getSession() {
   try {
@@ -87,5 +115,18 @@ export async function getAllPlaceDetail() {
     return response.data;
   } catch (error) {
     console.log("장소 세부 정보를 가져오는데 실패했습니다!: ", error);
+  }
+}
+
+// supermanage 장소 세부 정보 가져오기
+export async function getMyParticipation() {
+  try {
+    const response = await apiClient.get<ParticipationWithGame[]>(
+      `/participations/my/`
+    );
+    return response.data ?? [];
+  } catch (error) {
+    console.log("참가한 게임 정보를 가져오는데 실패했습니다!: ", error);
+    return [];
   }
 }

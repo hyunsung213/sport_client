@@ -97,7 +97,7 @@ export default function GameCard() {
                   />
                 </div>
 
-                <CardContent className="flex flex-col p-4 space-y-1">
+                <CardContent className="flex flex-col p-4 space-y-1 ">
                   <div className="flex justify-between text-xs text-gray-400">
                     <span>{game.Place.location}</span>
                   </div>
