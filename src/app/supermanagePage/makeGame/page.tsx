@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { Switch } from "@/components/ui/switch";
 import { useRouter } from "next/navigation";
-import { getAllPlaceDetail } from "@/utils/get";
+import { getAllPlaceDetail, getSupporters } from "@/utils/get";
 import { PlaceDetail, PlaceDetailWithGames } from "@/utils/interface/place";
 import { Card } from "@/components/ui/card";
 import LocationMap from "@/components/detailPage/LocationMap";
@@ -24,12 +24,15 @@ import HourMinutePicker from "@/components/supermanagePage/HourMinutePicker";
 import { IGame } from "@/utils/interface/game";
 import { postGame } from "@/utils/post";
 import { Slider } from "@/components/ui/slider";
+import { User } from "@/utils/interface/user";
 
 export default function CreateGamePage() {
   const router = useRouter();
 
   const [places, setPlaces] = useState<PlaceDetailWithGames[]>([]);
   const [selectPlace, setSelectPlace] = useState<PlaceDetailWithGames>();
+  const [supporters, setSupporters] = useState<User[]>([]);
+  const [selectSupporter, setSelectSupporter] = useState<User>();
   const [date, setDate] = useState<Date | undefined>();
   const [time, setTime] = useState<string>("");
   const [numOfMember, setNumOfMember] = useState<number>(4);
@@ -65,6 +68,19 @@ export default function CreateGamePage() {
     }
   };
 
+  const fetchSupporters = async () => {
+    setLoading(true);
+    try {
+      const res = await getSupporters();
+      setSupporters(res || []);
+      console.log("서포터 정보:", res);
+    } catch {
+      setError("서포터 정보를 불러오는데 실패했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const fetchSelectPlace = async (selectPlaceId: number) => {
     setLoading(true);
     try {
@@ -77,6 +93,23 @@ export default function CreateGamePage() {
       setSelectPlace(selectedPlace); // null로 fallback
     } catch (error) {
       console.error("장소 선택 중 오류:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchSelectSupporter = async (selectUserId: number) => {
+    setLoading(true);
+    try {
+      // places에서 해당 ID를 가진 장소 찾기
+      const selectedSupporter: User | undefined = supporters.find(
+        (supporter) => supporter.userId === selectUserId
+      );
+
+      // 선택된 장소 상태로 저장
+      setSelectSupporter(selectedSupporter); // null로 fallback
+    } catch (error) {
+      console.error("서포터 선택 중 오류", error);
     } finally {
       setLoading(false);
     }
@@ -118,6 +151,7 @@ export default function CreateGamePage() {
 
   useEffect(() => {
     fetchPlaces();
+    fetchSupporters();
   }, []);
 
   return (
@@ -125,20 +159,42 @@ export default function CreateGamePage() {
       {/* 상단: 타이틀 + 셀렉터 */}
       <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
         <h2 className="text-2xl font-bold">게임 만들기</h2>
-        <div className="w-full md:w-64">
-          <Label className="block mb-1 text-xl font-bold">장소 선택</Label>
-          <Select onValueChange={(value) => fetchSelectPlace(Number(value))}>
-            <SelectTrigger>
-              <SelectValue placeholder="장소를 선택하세요" />
-            </SelectTrigger>
-            <SelectContent>
-              {places.map((p) => (
-                <SelectItem key={p.placeId} value={p.placeId.toString()}>
-                  {p.placeName}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="flex flex-row justify-end w-full gap-4">
+          {/* 장소 선택 */}
+          <div className="flex flex-col w-auto">
+            <Label className="block mb-1 text-xl font-bold">장소 선택</Label>
+            <Select onValueChange={(value) => fetchSelectPlace(Number(value))}>
+              <SelectTrigger>
+                <SelectValue placeholder="장소를 선택하세요" />
+              </SelectTrigger>
+              <SelectContent>
+                {places.map((p) => (
+                  <SelectItem key={p.placeId} value={p.placeId.toString()}>
+                    {p.placeName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* 서포터 선택 */}
+          <div className="flex flex-col w-auto">
+            <Label className="block mb-1 text-xl font-bold">서포터 선택</Label>
+            <Select
+              onValueChange={(value) => fetchSelectSupporter(Number(value))}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="서포터를 선택하세요" />
+              </SelectTrigger>
+              <SelectContent>
+                {supporters.map((s) => (
+                  <SelectItem key={s.userId} value={s.userId.toString()}>
+                    {s.userName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
 

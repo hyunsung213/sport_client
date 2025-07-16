@@ -1,18 +1,53 @@
+"use client";
+
 import { Game, GameDetail } from "@/utils/interface/game";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { DateTime } from "luxon";
+import { Router } from "next/router";
+import { useRouter } from "next/navigation";
+import PayModal from "./PayModal";
+import { useEffect, useState } from "react";
+import { postPaticipation } from "@/utils/post";
+import { useParticipatedGames } from "@/context/ParticipationContext";
+import { ParticipationWithGame } from "@/utils/interface/participation";
 
 export default function GameInfoCard({ game }: { game?: GameDetail }) {
+  const router = useRouter();
   const dateTime = DateTime.fromISO(game?.date ?? "");
   const today = DateTime.local().startOf("day");
   const gameDate = DateTime.fromISO(game?.date ?? "").startOf("day");
   const diff = Math.floor(gameDate.diff(today, "days").days);
+  const [isPayOpen, setIsPayOpen] = useState(false);
+  const participatedGames = useParticipatedGames();
+  const [alreadyConfirmed, setAlreadyConfirmed] = useState(false);
 
   const formatCost = (cost: number) => {
     const num = typeof cost === "string" ? parseInt(cost, 10) : cost;
     return num.toLocaleString("ko-KR") + "원";
   };
+
+  const handleApply = async (gameId?: number) => {
+    // TODO: 실제 결제 연동 또는 결제 완료 API 호출
+    if (gameId) {
+      await postPaticipation(gameId);
+    }
+  };
+
+  const isGameConfirmed = (
+    participations: ParticipationWithGame[],
+    gameId: number
+  ) => {
+    const found = participations.find((p) => p.gameId === gameId);
+    return found?.isConfirmed ?? false;
+  };
+
+  useEffect(() => {
+    if (participatedGames && game?.gameId) {
+      const result = isGameConfirmed(participatedGames, game.gameId);
+      setAlreadyConfirmed(result);
+    }
+  }, [participatedGames, game?.gameId]);
 
   return (
     <div className="w-full">
@@ -61,7 +96,21 @@ export default function GameInfoCard({ game }: { game?: GameDetail }) {
           </div>
 
           {/* 신청 버튼 */}
-          <Button className="w-full py-2 mt-2 text-base">신청하기</Button>
+          <Button
+            className="w-full py-2 mt-2 text-base text-black transition-colors duration-200 bg-white border border-black hover:bg-black hover:text-white"
+            onClick={() => {
+              setIsPayOpen(true);
+              handleApply(game?.gameId);
+            }}
+            disabled={alreadyConfirmed}
+          >
+            신청하기
+          </Button>
+          <PayModal
+            open={isPayOpen}
+            game={game}
+            onClose={() => setIsPayOpen(false)}
+          />
         </CardContent>
       </Card>
     </div>

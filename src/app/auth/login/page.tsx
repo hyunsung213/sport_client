@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { getGoogleLoginUrl, getKakaoLoginUrl, login } from "@/utils/auth/auth";
 import { useSession } from "@/context/SessionContext";
+import Image from "next/image";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -33,7 +34,7 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="max-w-md p-6 mx-auto mt-10 space-y-6 bg-white shadow rounded-xl">
+    <div className="justify-center p-6 mx-auto mt-10 space-y-6 bg-white shadow w-xl rounded-xl">
       <h2 className="text-2xl font-bold text-center">로그인</h2>
       <form
         onSubmit={(e) => {
@@ -54,8 +55,11 @@ export default function LoginForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Button className="w-full" onClick={handleLogin}>
-            이메일로 로그인하기
+          <Button
+            className="w-full text-white bg-black hover:bg-gray-800"
+            onClick={handleLogin}
+          >
+            로그인하기
           </Button>
 
           {errorMsg && (
@@ -70,30 +74,43 @@ export default function LoginForm() {
         <Separator className="flex-1" />
       </div>
 
+      <div className="flex justify-center w-full gap-4">
+        <a href={getKakaoLoginUrl()}>
+          <Button
+            variant="ghost"
+            className="flex items-center justify-center w-10 h-10 p-0 bg-yellow-300 rounded-full hover:bg-yellow-400"
+          >
+            <Image
+              src="/images/KakaoTalk_logo.png"
+              alt="Kakao Logo"
+              width={24}
+              height={24}
+            />
+          </Button>
+        </a>
+
+        <a href={getGoogleLoginUrl()}>
+          <Button
+            variant="ghost"
+            className="flex items-center justify-center w-10 h-10 p-0 bg-white border border-gray-300 rounded-full hover:bg-gray-100"
+          >
+            <Image
+              src="/images/Google_logo.png"
+              alt="Google Logo"
+              width={24}
+              height={24}
+            />
+          </Button>
+        </a>
+      </div>
+
       <Button
-        variant="outline"
-        className="w-full text-fuchsia-900 bg-fuchsia-300 hover:bg-fuchsia-400"
+        variant="link"
+        className="w-full text-sm text-gray-600 hover:text-black"
         onClick={() => goToSignup()}
       >
         회원가입하기
       </Button>
-
-      <a href={getKakaoLoginUrl()}>
-        <Button
-          variant="outline"
-          className="w-full text-yellow-900 bg-yellow-300 hover:bg-yellow-400"
-        >
-          🟡 카카오로 로그인하기
-        </Button>
-      </a>
-      <a href={getGoogleLoginUrl()}>
-        <Button
-          variant="outline"
-          className="w-full text-white bg-red-500 hover:bg-red-600"
-        >
-          🔴 구글로 로그인하기
-        </Button>
-      </a>
     </div>
   );
 }

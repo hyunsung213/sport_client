@@ -7,6 +7,8 @@ export interface User {
   email: string;
   phoneNum: string;
   isManager: boolean;
+  isSuppoter: boolean;
+  isSuperManager: boolean;
 }
 
 export interface UserDetail {
@@ -15,7 +17,9 @@ export interface UserDetail {
   email: string;
   phoneNum: string;
   isManager: boolean;
-  Rate: Rate;
+  isSupporter: boolean;
+  isSupperManager: boolean;
+  Rate?: Rate;
 }
 
 export interface Session {
@@ -23,6 +27,7 @@ export interface Session {
   userName: string;
   email: string;
   isManager: boolean;
+  isSupporter: boolean;
   isSuperManager: boolean;
   isSocial: boolean;
 }

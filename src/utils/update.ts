@@ -1,7 +1,10 @@
 import apiClient from "./api";
+import { Match, MatchDetail } from "./interface/match";
 import { Note } from "./interface/note";
 import { Option } from "./interface/option";
 import { Place, PlaceDetail } from "./interface/place";
+
+/////////////////////// 장소 관련 ///////////////////////
 
 // 장소 디테일 수정
 export async function updatePlaceDetail(updateData: Partial<PlaceDetail>) {
@@ -43,7 +46,56 @@ export async function updatePlaceDetail(updateData: Partial<PlaceDetail>) {
       note: results[2].status === "fulfilled" ? results[2].value.data : null,
     };
   } catch (error) {
-    console.error("장소 디테일을 업데이트하는 데 실패했습니다:", error);
+    console.error("장소 디테일을 업데이트하는 데 실패했습니다.", error);
     throw error;
+  }
+}
+
+///////////////////// 게임 관련 ////////////////////////////
+
+// 결제 후 참가 확정하기
+export async function updateIsConfirm(gameId: number) {
+  try {
+    const response = await apiClient.put(`/participations/confirm/`, {
+      gameId,
+    });
+    return response.data;
+  } catch (error) {
+    console.log("참가 확정하는데 실패했습니다.", error);
+  }
+}
+
+///////////// 서포터 게임 관리하기 /////////////////
+
+// Match 점수 기록하기
+export async function updateMatch(updateData: Partial<Match>) {
+  try {
+    const { matchId, teamAScore, teamBScore, playerOfMatch, winnerTeam } =
+      updateData;
+
+    const payload = {
+      teamAScore,
+      teamBScore,
+      winnerTeam,
+      playerOfMatch,
+    };
+
+    const response = await apiClient.put(`/matches/${matchId}`, payload);
+    return response.data;
+  } catch (error) {
+    console.log("Match 점수를 기록하는데 실패했습니다.", error);
+  }
+}
+
+// 게임 종료하기
+export async function updateGameIsFinished(gameId: number) {
+  try {
+    const isFinished = true;
+    const response = await apiClient.put(`/games/end/${gameId}`, {
+      isFinished,
+    });
+    return response.data;
+  } catch (error) {
+    console.log("게임을 종료하는데 실패했습니다.", error);
   }
 }

@@ -4,7 +4,6 @@ import { optionList } from "@/lib/option";
 import { Option } from "@/utils/interface/option";
 
 export default function PlaceOptionCard({ option }: { option: Option }) {
-  console.log("PlaceOptionCard option: ", option);
   return (
     <div className="grid grid-cols-2 gap-4 p-4">
       {Object.entries(option)

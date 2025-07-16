@@ -20,6 +20,7 @@ import { is } from "date-fns/locale";
 import { deleteInterestGame } from "@/utils/delete";
 import { postInterestGame } from "@/utils/post";
 import { useRouter } from "next/navigation";
+import { DateTime } from "luxon";
 
 export default function GameList() {
   const today = new Date();
@@ -169,7 +170,7 @@ export default function GameList() {
       {filteredGames.length > 0 ? (
         <div className="flex flex-col gap-2 mt-4">
           {filteredGames.map((game, idx) => {
-            const gameTime = game.date.slice(11, 16); // 시간만 추출 (HH:mm)
+            const dateTime = DateTime.fromISO(game?.date ?? "");
             const isLiked = isInterestedGame(game.gameId); // 관심 게임 여부 확인
             const isOdd = idx % 2 === 0; // 0부터 시작 → 0, 2, 4... 홀수 번째로 인식
             return (
@@ -181,7 +182,9 @@ export default function GameList() {
                 }}
                 onClick={() => goToGameDetail(game.gameId)}
               >
-                <div className="w-16 font-bold text-left">{gameTime}</div>
+                <div className="w-16 font-bold text-left">
+                  {dateTime.toFormat("HH:mm")}
+                </div>
 
                 <div className="flex-1 text-sm text-left text-gray-800">
                   {game.Place.placeName}
