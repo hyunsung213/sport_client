@@ -3,6 +3,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { getPlaceDetail } from "@/utils/get";
 import { PlaceDetailWithGames } from "@/utils/interface/place";
+import { useRouter } from "next/navigation";
+import { useAuth } from "./AuthContext";
 
 interface PlaceContextType {
   places: PlaceDetailWithGames[];
@@ -15,11 +17,13 @@ interface PlaceContextType {
 const PlaceContext = createContext<PlaceContextType | undefined>(undefined);
 
 export const PlaceProvider = ({ children }: { children: React.ReactNode }) => {
+  const router = useRouter();
   const [places, setPlaces] = useState<PlaceDetailWithGames[]>([]);
   const [selectedPlaceId, setSelectedPlaceId] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [mounted, setMounted] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     setMounted(true);

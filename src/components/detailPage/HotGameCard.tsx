@@ -1,8 +1,10 @@
+import { brandColors } from "@/styles/color";
+
 export default function HotGameCard() {
   return (
     <div
       className="flex items-center justify-center w-full gap-4 p-3 bg-white border shadow rounded-2xl"
-      style={{ borderColor: "#ffc3c1" }}
+      style={{ borderColor: brandColors.deepOrange }}
     >
       <img
         src="/images/badminton.png"

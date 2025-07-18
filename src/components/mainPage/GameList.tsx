@@ -21,13 +21,14 @@ import { deleteInterestGame } from "@/utils/delete";
 import { postInterestGame } from "@/utils/post";
 import { useRouter } from "next/navigation";
 import { DateTime } from "luxon";
+import { bgColor, brandColors, fontColor } from "@/styles/color";
 
 export default function GameList() {
   const today = new Date();
   const daysKor = ["일", "월", "화", "수", "목", "금", "토"];
   const router = useRouter();
 
-  // ✅ 오늘 날짜 포맷 함수
+  // 오늘 날짜 포맷: "YYYY-MM-DD"
   const getFormattedToday = () => {
     return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(
       2,
@@ -58,6 +59,7 @@ export default function GameList() {
         getInterestGameDetail(),
       ]);
       setGames(resultGames || []);
+      console.log("result:", resultGames);
       setInterestGames(resultInterestGames || []);
     } catch (err) {
       console.error(err);
@@ -67,12 +69,21 @@ export default function GameList() {
     }
   };
 
-  // 날짜, 지역구 기준으로 Game 필터링
-  const filteredGames = games.filter(
-    (game) =>
-      game.date.slice(0, 10) === selectedDate && // 앞 10자리만 비교
-      (selectDistrict ? game.Place.location.includes(selectDistrict) : true)
-  );
+  // 날짜 + 지역구 필터
+  const filteredGames = games.filter((game) => {
+    const dateTime = DateTime.fromISO(game.date, { zone: "utc" }).setZone(
+      "Asia/Seoul"
+    );
+
+    const gameDateStr = dateTime.toFormat("yyyy-MM-dd");
+    const matchesDate = gameDateStr === selectedDate;
+
+    const matchesDistrict = selectDistrict
+      ? game.Place?.location?.includes(selectDistrict)
+      : true;
+
+    return matchesDate && matchesDistrict;
+  });
 
   // 관심 게임 여부 확인
   const isInterestedGame = (gameId: number) => {
@@ -108,8 +119,7 @@ export default function GameList() {
     <div className="flex flex-col max-w-5xl gap-4">
       {/* 날짜 선택 */}
       <div
-        className="flex items-center justify-center w-full gap-12 px-6 py-2 rounded-full"
-        style={{ backgroundColor: "#e5f3fb" }}
+        className={`flex items-center justify-center w-full gap-12 px-6 py-2 rounded-full ${bgColor.skyblue}`}
       >
         {Array.from({ length: 10 }, (_, i) => {
           const newDate = new Date(today);
@@ -127,21 +137,27 @@ export default function GameList() {
 
           return (
             <div key={i} className="flex flex-col items-center w-12">
-              <Button
-                variant={isSelected ? "default" : "ghost"}
-                className={`w-12 h-12 rounded-full flex flex-col items-center justify-center ${
-                  isSaturday ? "text-blue-500" : isSunday ? "text-red-500" : ""
-                }`}
-                style={
-                  isSelected
-                    ? { backgroundColor: "#b6e9f9", color: "#000" }
-                    : {}
-                }
+              <button
+                className={`w-12 h-12 rounded-full flex flex-col items-center justify-center hover:scale-105
+      ${isSelected ? `${bgColor.orange} text-white` : "bg-transparent"}
+      ${
+        isSaturday
+          ? isSelected
+            ? ""
+            : "text-blue-500"
+          : isSunday
+          ? isSelected
+            ? ""
+            : "text-red-500"
+          : isSelected
+          ? ""
+          : "text-black"
+      }`}
                 onClick={() => setSelectedDate(formattedDate)}
               >
                 <span className="font-bold">{dateNum}</span>
                 <span className="text-xs">{day}</span>
-              </Button>
+              </button>
             </div>
           );
         })}
@@ -150,14 +166,26 @@ export default function GameList() {
       {/* 지역구 선택 */}
       <div>
         <Select onValueChange={(val) => setSelectDistrict(val)}>
-          <SelectTrigger className="h-8 text-sm w-[180px]">
+          <SelectTrigger
+            className={`h-8 text-sm w-[180px] ${bgColor.skyblue} ${fontColor.olive} rounded-md`}
+          >
             <SelectValue placeholder="지역구 선택" />
           </SelectTrigger>
-          <SelectContent className="overflow-y-auto max-h-40">
+
+          <SelectContent className="overflow-y-auto bg-white border rounded-md shadow-lg max-h-80">
             <SelectGroup>
-              <SelectLabel>서울</SelectLabel>
+              <SelectLabel
+                className={`px-2 py-1 ${fontColor.olive} text-xs font-bold`}
+              >
+                서울
+              </SelectLabel>
+
               {seoulDistricts.map((district) => (
-                <SelectItem key={district.name} value={district.address}>
+                <SelectItem
+                  key={district.name}
+                  value={district.address}
+                  className={`text-sm text-gray-700 px-2 py-1 cursor-pointer hover:scale-105`}
+                >
                   {district.name}
                 </SelectItem>
               ))}
@@ -170,7 +198,9 @@ export default function GameList() {
       {filteredGames.length > 0 ? (
         <div className="flex flex-col gap-2 mt-4">
           {filteredGames.map((game, idx) => {
-            const dateTime = DateTime.fromISO(game?.date ?? "");
+            const dateTime = DateTime.fromISO(game.date, {
+              zone: "utc",
+            }).setZone("Asia/Seoul");
             const isLiked = isInterestedGame(game.gameId); // 관심 게임 여부 확인
             const isOdd = idx % 2 === 0; // 0부터 시작 → 0, 2, 4... 홀수 번째로 인식
             return (
@@ -178,7 +208,9 @@ export default function GameList() {
                 key={game.gameId}
                 className={`flex items-center justify-between px-4 py-2 cursor-pointer hover:scale-102`}
                 style={{
-                  backgroundColor: isOdd ? "#e5f3fb" : "#ffffff",
+                  backgroundColor: isOdd
+                    ? brandColors.skyolive
+                    : brandColors.skyblue,
                 }}
                 onClick={() => goToGameDetail(game.gameId)}
               >
@@ -186,7 +218,7 @@ export default function GameList() {
                   {dateTime.toFormat("HH:mm")}
                 </div>
 
-                <div className="flex-1 text-sm text-left text-gray-800">
+                <div className={`flex-1 text-sm text-left  ${fontColor.black}`}>
                   {game.Place.placeName}
                 </div>
 

@@ -2,8 +2,8 @@ import "./globals.css";
 import { ReactNode } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { SessionProvider } from "@/context/SessionContext";
 import { ParticipationProvider } from "@/context/ParticipationContext";
+import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata = {
   title: "스포츠 플랫폼",
@@ -13,7 +13,7 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ko">
-      <SessionProvider>
+      <AuthProvider>
         <ParticipationProvider>
           <body className="flex flex-col items-center w-full min-h-screen">
             <Header />
@@ -21,7 +21,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <Footer />
           </body>
         </ParticipationProvider>
-      </SessionProvider>
+      </AuthProvider>
     </html>
   );
 }

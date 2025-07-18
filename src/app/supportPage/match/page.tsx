@@ -10,11 +10,15 @@ import { MatchDetail } from "@/utils/interface/match";
 import MatchCard from "@/components/supportPage/MatchCard";
 import { Button } from "@/components/ui/button";
 import { updateGameIsFinished } from "@/utils/update";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function MatchPage() {
+  const router = useRouter();
   const [games, setGames] = useState<GameDetailForSupporter[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { user } = useAuth();
   const [selectedGameIndex, setSelectedGameIndex] = useState(0);
   const selectedGame = games[selectedGameIndex];
 
@@ -29,6 +33,14 @@ export default function MatchPage() {
       setLoading(false);
     }
   };
+
+  // ✅ 서포터가 아닐 경우 홈으로 리다이렉트
+  useEffect(() => {
+    if (!loading && (!user || !user.isSupporter)) {
+      alert("접근 권한이 없습니다.");
+      router.replace("/");
+    }
+  }, [user, loading, router]);
 
   useEffect(() => {
     fetchGames();

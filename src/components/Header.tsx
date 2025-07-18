@@ -6,17 +6,18 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { logout } from "@/utils/auth/auth";
 import { Button } from "./ui/button";
-import { useSession } from "@/context/SessionContext";
+import { bgColor, brandColors, fontColor } from "@/styles/color";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Header() {
   const router = useRouter();
   const [error, setError] = useState("");
-  const { session, loading, refetchSession } = useSession();
+  const { user, loading, refetchUser } = useAuth();
 
   const fetchLogout = async () => {
     try {
       await logout();
-      await refetchSession();
+      await refetchUser();
       router.push(`/`);
       alert("로그아웃을 성공적으로 진행했습니다!");
     } catch (err) {
@@ -39,38 +40,38 @@ export default function Header() {
             width={60}
             height={60}
           />
-          <span className="text-2xl font-bold tracking-tight text-white">
+          <span
+            className={`text-2xl font-bold tracking-tight ${fontColor.orange}`}
+          >
             SportWeb
           </span>
         </div>
 
         {/* 오른쪽 유저 관련 메뉴 */}
         <div className="flex items-center gap-4">
-          {session ? (
+          {user ? (
             <>
-              {session.isManager && (
+              {user.isManager && (
                 <Button
-                  variant="outline"
-                  className="border-[#407AAC] text-[#407AAC] hover:bg-[#407AAC] hover:text-white"
+                  className={`${bgColor.olive} ${fontColor.white} hover:scale-105 cursor-pointer hover:${bgColor.olive} hover:${fontColor.white}`}
                   onClick={() => router.push("/managePage/calendar")}
                 >
                   내 장소관리
                 </Button>
               )}
 
-              {session.isSuperManager && (
+              {user.isSuperManager && (
                 <Button
-                  className="bg-[#407AAC] text-white hover:bg-[#305d88]"
+                  className={`${bgColor.olive} ${fontColor.white} hover:scale-105 cursor-pointer hover:${bgColor.olive} hover:${fontColor.white}`}
                   onClick={() => router.push("/supermanagePage/makeGame")}
                 >
                   게임 만들기
                 </Button>
               )}
 
-              {session.isSupporter && (
+              {user.isSupporter && (
                 <Button
-                  variant="outline"
-                  className="border-[#407AAC] text-[#407AAC] hover:bg-[#407AAC] hover:text-white"
+                  className={`${bgColor.olive} ${fontColor.white} hover:scale-105 cursor-pointer hover:${bgColor.olive} hover:${fontColor.white}`}
                   onClick={() => router.push("/supportPage/match")}
                 >
                   서포터
@@ -78,14 +79,13 @@ export default function Header() {
               )}
 
               <FaUserCircle
-                size={26}
-                className="text-white cursor-pointer"
+                size={33}
+                className={`${fontColor.orange} cursor-pointer`}
                 onClick={() => router.push("/myPage")}
               />
 
               <Button
-                variant="outline"
-                className="border-white text-white hover:bg-white hover:text-[#C14C21]"
+                className={`${bgColor.white} ${fontColor.deepOrange} font-bold cursor-pointer hover:${bgColor.white} hover:scale-105`}
                 onClick={fetchLogout}
               >
                 로그아웃
@@ -93,7 +93,7 @@ export default function Header() {
             </>
           ) : (
             <Button
-              className="bg-white text-[#C14C21] hover:bg-[#407AAC] hover:text-white"
+              className={`${bgColor.white} ${fontColor.blue} font-bold cursor-pointer hover:${bgColor.white} hover:scale-105`}
               onClick={() => router.push("/auth/login")}
             >
               로그인

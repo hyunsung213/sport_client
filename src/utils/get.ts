@@ -6,7 +6,7 @@ import {
 } from "./interface/game";
 import { ParticipationWithGame } from "./interface/participation";
 import { PlaceDetail, PlaceDetailWithGames } from "./interface/place";
-import { Session, User, UserDetail } from "./interface/user";
+import { User, UserDetail } from "./interface/user";
 
 export interface DateFilter {
   startDate: string;
@@ -49,6 +49,7 @@ export async function getGameDetailForSupporter() {
 // 날짜별 게임 디테일 정보 가져오기
 export async function getGameDetailByDate(data: DateFilter) {
   try {
+    console.log(data);
     const response = await apiClient.get<GameDetail[]>(`/games/date`, {
       params: data,
     });
@@ -85,16 +86,6 @@ export async function getSupporters() {
     return response.data;
   } catch (error) {
     console.log("서포터 정보를 가져오는데 실패했습니다!: ", error);
-  }
-}
-
-// 세션 정보 가져오기
-export async function getSession() {
-  try {
-    const response = await apiClient.get<Session>(`/session/`);
-    return response.data;
-  } catch (error) {
-    console.log("세션 정보를 가져오는데 실패했습니다!: ", error);
   }
 }
 
