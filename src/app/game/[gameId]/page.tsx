@@ -28,6 +28,7 @@ import {
   DialogTrigger,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { bgColor } from "@/styles/color";
 
 interface Props {
   params: Promise<{ gameId: string }>;
@@ -117,11 +118,11 @@ export default function GameDetailPage() {
   const fallback = "https://via.placeholder.com/300x200?text=No+Image";
 
   return (
-    <div className="max-w-5xl p-4 space-y-6">
+    <div className="p-4 space-y-6 w-5xl">
       <Dialog open={open} onOpenChange={setOpen}>
         {/* 상단 이미지 영역 */}
         <div
-          className="grid grid-cols-4 gap-4 p-4 overflow-hidden bg-white border border-gray-200 shadow-sm cursor-pointer rounded-xl"
+          className={`grid w-full grid-cols-4 gap-4 p-4 overflow-hidden ${bgColor.skyblue} border border-gray-200 shadow-sm cursor-pointer rounded-lg`}
           onClick={() => setOpen(true)}
         >
           <div className="col-span-2">
@@ -134,21 +135,21 @@ export default function GameDetailPage() {
           <div className="flex flex-col gap-4">
             <div className="flex flex-row gap-4">
               <img
-                src={images[0] || fallback}
+                src={images[1] || fallback}
                 className="object-cover w-full h-full rounded-lg"
               />
               <img
-                src={images[0] || fallback}
+                src={images[2] || fallback}
                 className="object-cover w-full h-full rounded-lg"
               />
             </div>
             <div className="flex flex-row gap-4">
               <img
-                src={images[0] || fallback}
+                src={images[3] || fallback}
                 className="object-cover w-full h-full rounded-lg"
               />
               <img
-                src={images[0] || fallback}
+                src={images[4] || fallback}
                 className="object-cover w-full h-full rounded-lg"
               />
             </div>
@@ -201,7 +202,7 @@ export default function GameDetailPage() {
             <Button
               variant="outline"
               size="icon"
-              className="border-gray-300 hover:bg-gray-100"
+              className="border-gray-300 cursor-pointer hover:bg-gray-100"
               onClick={() => handleCopyUrl()}
             >
               <FiShare className="text-gray-600" />
@@ -210,7 +211,7 @@ export default function GameDetailPage() {
             <Button
               variant="outline"
               size="icon"
-              className="border-gray-300 hover:bg-gray-100"
+              className="border-gray-300 cursor-pointer hover:bg-gray-100"
               onClick={() => toggleLike(gameId)}
             >
               {isLiked ? (

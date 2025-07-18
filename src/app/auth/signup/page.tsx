@@ -16,7 +16,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { seoulDistricts } from "@/lib/seoul";
-import { useSession } from "@/context/SessionContext";
 import { Switch } from "@/components/ui/switch";
 
 export default function SignUpPage() {

@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { postPaticipation } from "@/utils/post";
 import { useParticipatedGames } from "@/context/ParticipationContext";
 import { ParticipationWithGame } from "@/utils/interface/participation";
+import { brandColors } from "@/styles/color";
 
 export default function GameInfoCard({ game }: { game?: GameDetail }) {
   const router = useRouter();
@@ -53,7 +54,7 @@ export default function GameInfoCard({ game }: { game?: GameDetail }) {
     <div className="w-full">
       <Card
         className="w-full p-4 space-y-4 border border-gray-200 rounded-xl"
-        style={{ borderColor: "#ffc3c1" }}
+        style={{ borderColor: brandColors.deepOrange }}
       >
         <CardContent className="space-y-4">
           {/* 날짜 & 시간 */}

@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { seoulDistricts } from "@/lib/seoul";
-import { useSession } from "@/context/SessionContext";
+import { useAuth } from "@/context/AuthContext";
 
 export default function SocialSignupPage() {
   const router = useRouter();
@@ -22,12 +22,10 @@ export default function SocialSignupPage() {
   const [phoneNum, setPhoneNum] = useState("");
   const [city, setCity] = useState("");
   const [isManager, setIsManager] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const { session, refetchSession } = useSession();
+  const { user, loading, refetchUser } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
 
     try {
       const res = await signUpForSocial({
@@ -38,7 +36,7 @@ export default function SocialSignupPage() {
       });
 
       if (res?.message === "추가 정보 저장 완료") {
-        await refetchSession();
+        await refetchUser();
         router.push("/");
       } else {
         alert("저장 실패: 서버 응답이 올바르지 않습니다.");
@@ -47,7 +45,6 @@ export default function SocialSignupPage() {
       console.error("추가 정보 저장 실패:", err);
       alert("오류가 발생했습니다.");
     } finally {
-      setLoading(false);
     }
   };
 

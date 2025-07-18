@@ -6,8 +6,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        brandBg: "#C14C21", // 전체적인 배경색
-        brandAccent: "#407AAC", // 선택된 버튼 강조색
+        brand: {
+          olive: "#818807",
+          blue: "#6CA2E8",
+          orange: "#F28B0C",
+          deepOrange: "#F2600C",
+          red: "#D9310B",
+        },
       },
     },
   },

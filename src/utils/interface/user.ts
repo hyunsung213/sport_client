@@ -22,7 +22,7 @@ export interface UserDetail {
   Rate?: Rate;
 }
 
-export interface Session {
+export interface AuthUser {
   id: number;
   userName: string;
   email: string;

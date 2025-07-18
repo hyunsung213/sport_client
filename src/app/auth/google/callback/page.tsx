@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession } from "@/context/SessionContext";
+import { useAuth } from "@/context/AuthContext";
 import { googleLoginCallback } from "@/utils/auth/auth";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -9,7 +9,8 @@ export default function GoogleCallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
-  const { session, loading, refetchSession } = useSession();
+
+  const { user, loading, refetchUser } = useAuth();
 
   useEffect(() => {
     const handleGoogleLogin = async () => {
@@ -21,12 +22,12 @@ export default function GoogleCallbackPage() {
             router.push("/auth/signup/social");
           } else {
             console.log("✅ 구글 로그인 성공. 홈으로 이동");
-            await refetchSession();
+            await refetchUser(); // ✅ JWT 기반 사용자 정보 갱신
             router.push("/");
           }
         } else {
-          console.error("❌ 응답 실패 또는 세션 없음");
-          alert("구글 로그인 실패: 세션 없음");
+          console.error("❌ 응답 실패 또는 사용자 없음");
+          alert("구글 로그인 실패: 사용자 없음");
         }
       } catch (err) {
         console.error("❌ 구글 로그인 실패:", err);

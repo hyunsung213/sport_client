@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { getGoogleLoginUrl, getKakaoLoginUrl, login } from "@/utils/auth/auth";
-import { useSession } from "@/context/SessionContext";
 import Image from "next/image";
+
+import { useAuth } from "@/context/AuthContext"; // ✅ 변경
+import { login, getKakaoLoginUrl, getGoogleLoginUrl } from "@/utils/auth/auth"; // ✅ 변경
 
 export default function LoginForm() {
   const router = useRouter();
@@ -15,20 +16,20 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
-  const { session, loading, refetchSession } = useSession();
+
+  const { user, loading, refetchUser } = useAuth(); // ✅ 변경
 
   const handleLogin = async () => {
     const result = await login({ email, password });
 
     if (result?.message === "로그인 성공") {
-      await refetchSession();
+      await refetchUser(); // ✅ JWT 기반 사용자 정보 갱신
       router.push("/"); // 로그인 성공 후 이동할 페이지
     } else {
       setErrorMsg(result?.message || "로그인에 실패했습니다.");
     }
   };
 
-  //SignUp 페이지로 이동하는 함수
   const goToSignup = () => {
     router.push(`/auth/signup`);
   };
@@ -107,7 +108,7 @@ export default function LoginForm() {
       <Button
         variant="link"
         className="w-full text-sm text-gray-600 hover:text-black"
-        onClick={() => goToSignup()}
+        onClick={goToSignup}
       >
         회원가입하기
       </Button>

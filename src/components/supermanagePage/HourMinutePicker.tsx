@@ -58,11 +58,14 @@ export default function HourMinutePicker({
             <SelectValue placeholder="분 선택" />
           </SelectTrigger>
           <SelectContent>
-            {Array.from({ length: 60 }, (_, i) => (
-              <SelectItem key={i} value={i.toString().padStart(2, "0")}>
-                {i.toString().padStart(2, "0")}분
-              </SelectItem>
-            ))}
+            {Array.from({ length: 6 }, (_, i) => {
+              const val = (i * 10).toString().padStart(2, "0");
+              return (
+                <SelectItem key={val} value={val}>
+                  {val}분
+                </SelectItem>
+              );
+            })}
           </SelectContent>
         </Select>
       </div>

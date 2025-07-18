@@ -25,6 +25,7 @@ import { IGame } from "@/utils/interface/game";
 import { postGame } from "@/utils/post";
 import { Slider } from "@/components/ui/slider";
 import { User } from "@/utils/interface/user";
+import { useAuth } from "@/context/AuthContext";
 
 export default function CreateGamePage() {
   const router = useRouter();
@@ -37,23 +38,9 @@ export default function CreateGamePage() {
   const [time, setTime] = useState<string>("");
   const [numOfMember, setNumOfMember] = useState<number>(4);
   const [cost, setCost] = useState<number>(0);
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  // 시간 리스트 생성 (00:00 ~ 23:59, 1분 단위)
-  const generateTimeOptions = () => {
-    const times: string[] = [];
-    for (let h = 0; h < 24; h++) {
-      for (let m = 0; m < 60; m++) {
-        const hour = h.toString().padStart(2, "0");
-        const minute = m.toString().padStart(2, "0");
-        times.push(`${hour}:${minute}`);
-      }
-    }
-    return times;
-  };
-
-  const timeOptions = generateTimeOptions();
 
   const fetchPlaces = async () => {
     setLoading(true);
@@ -115,23 +102,44 @@ export default function CreateGamePage() {
     }
   };
 
+  const combineDateAndTime = (
+    date: Date | undefined,
+    time: string
+  ): string | undefined => {
+    if (!date || !time) return undefined;
+
+    const [hourStr, minuteStr] = time.split(":");
+    const hour = Number(hourStr);
+    const minute = Number(minuteStr);
+
+    if (isNaN(hour) || isNaN(minute)) return undefined;
+
+    const kstDate = new Date(date);
+    kstDate.setHours(hour);
+    kstDate.setMinutes(minute);
+    kstDate.setSeconds(0);
+    kstDate.setMilliseconds(0);
+    const utcDate = new Date(kstDate);
+
+    return utcDate.toISOString(); //ktc로 넘겨줌
+  };
+
   const handleSubmit = async () => {
     if (!selectPlace?.placeId || !date || !time || !numOfMember || !cost) {
       alert("모든 항목을 입력해주세요.");
       return;
     }
 
-    const gameDate = new Date(date);
-    const [hour, minute] = time.split(":").map(Number);
-    gameDate.setHours(hour);
-    gameDate.setMinutes(minute);
+    const gameDate = combineDateAndTime(date, time);
     const placeId = Number(selectPlace.placeId);
+    const supporterId = Number(selectSupporter?.userId);
 
     const newGame: IGame = {
       placeId,
-      date: gameDate.toISOString(),
+      date: gameDate ?? "",
       numOfMember,
       cost,
+      supporterId,
     };
 
     try {
@@ -149,6 +157,14 @@ export default function CreateGamePage() {
     }
   };
 
+  // ✅ 슈퍼 매니저가 아닐 경우 홈으로 리다이렉트
+  useEffect(() => {
+    if (!loading && (!user || !user.isSuperManager)) {
+      alert("접근 권한이 없습니다.");
+      router.replace("/");
+    }
+  }, [user, loading, router]);
+
   useEffect(() => {
     fetchPlaces();
     fetchSupporters();
@@ -158,7 +174,7 @@ export default function CreateGamePage() {
     <div className="p-6 mx-auto mt-6 space-y-8 bg-white border shadow-md w-5xl rounded-2xl">
       {/* 상단: 타이틀 + 셀렉터 */}
       <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-        <h2 className="text-2xl font-bold">게임 만들기</h2>
+        <h2 className="w-full text-2xl font-bold">게임 만들기</h2>
         <div className="flex flex-row justify-end w-full gap-4">
           {/* 장소 선택 */}
           <div className="flex flex-col w-auto">
@@ -239,10 +255,11 @@ export default function CreateGamePage() {
                       >
                         <span>
                           🕒{" "}
-                          {new Date(game.date).toLocaleString("ko-KR", {
+                          {new Intl.DateTimeFormat("ko-KR", {
                             dateStyle: "short",
                             timeStyle: "short",
-                          })}
+                            timeZone: "Asia/Seoul", // 👈 명시적으로 한국 시간대 지정
+                          }).format(new Date(game.date))}
                         </span>
                       </li>
                     ))}
@@ -284,8 +301,7 @@ export default function CreateGamePage() {
           <Calendar
             mode="single"
             selected={date}
-            onSelect={setDate}
-            className=""
+            onSelect={(d) => setDate(d)} // 그냥 바로 setDate(d)
           />
         </Card>
 
