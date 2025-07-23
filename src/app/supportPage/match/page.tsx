@@ -26,6 +26,7 @@ export default function MatchPage() {
     setLoading(true);
     try {
       const res = await getGameDetailForSupporter();
+      console.log("ㄷㄹㅇㅎ: ", res);
       setGames(res || []);
     } catch (e) {
       setError("게임 정보를 불러오는 데 실패했습니다.");
@@ -51,43 +52,46 @@ export default function MatchPage() {
   if (games.length === 0) return <p>게임 데이터가 없습니다.</p>;
 
   return (
-    <div className="pb-10 space-y-6 w-2xl">
-      <div className="flex items-center justify-between w-full my-4">
-        {/* 왼쪽: 화살표 + 장소/날짜 + 화살표 */}
-        <div className="absolute flex items-center gap-4 transform -translate-x-1/2 left-1/2">
-          {/* ◀ 왼쪽 화살표 */}
-          <Button
-            onClick={() =>
-              setSelectedGameIndex((prev) => Math.max(0, prev - 1))
-            }
-            disabled={selectedGameIndex === 0}
-            className="px-3 py-1 text-xl text-black bg-white border rounded-full hover:bg-gray-100 disabled:opacity-50"
-          >
-            ◀
-          </Button>
+    <div className="max-w-screen-lg p-6 pb-10 mx-auto space-y-6">
+      {/* 장소/날짜 & 이전/다음 버튼 */}
+      <div className="flex items-center justify-center gap-2 sm:gap-4">
+        {/* ◀ 왼쪽 화살표 */}
+        <Button
+          onClick={() => setSelectedGameIndex((prev) => Math.max(0, prev - 1))}
+          disabled={selectedGameIndex === 0}
+          className="px-2 py-1 text-base text-black bg-white border rounded-full sm:text-xl hover:bg-gray-100 disabled:opacity-50"
+        >
+          ◀
+        </Button>
 
-          {/* 📍 장소 + 📅 날짜 */}
-          <div className="text-lg font-semibold text-center min-w-[200px]">
-            📍 {games[selectedGameIndex].Place.placeName} <br />
-            📅 {new Date(games[selectedGameIndex].date).toLocaleDateString()}
-          </div>
-
-          {/* ▶ 오른쪽 화살표 */}
-          <Button
-            onClick={() =>
-              setSelectedGameIndex((prev) =>
-                Math.min(games.length - 1, prev + 1)
-              )
-            }
-            disabled={selectedGameIndex === games.length - 1}
-            className="px-3 py-1 text-xl text-black bg-white border rounded-full hover:bg-gray-100 disabled:opacity-50"
-          >
-            ▶
-          </Button>
+        {/* 장소 + 날짜 */}
+        <div className="text-sm sm:text-lg font-semibold text-center min-w-[150px] sm:min-w-[200px] truncate">
+          📍 {games[selectedGameIndex].Place.placeName}{" "}
+          <br className="sm:hidden" />
+          📅{" "}
+          {new Date(games[selectedGameIndex].date).toLocaleString("ko-KR", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          })}
         </div>
 
-        {/* 오른쪽: 게임 종료 버튼 */}
-        <div className="ml-auto">
+        {/* ▶ 오른쪽 화살표 */}
+        <Button
+          onClick={() =>
+            setSelectedGameIndex((prev) => Math.min(games.length - 1, prev + 1))
+          }
+          disabled={selectedGameIndex === games.length - 1}
+          className="px-2 py-1 text-base text-black bg-white border rounded-full sm:text-xl hover:bg-gray-100 disabled:opacity-50"
+        >
+          ▶
+        </Button>
+
+        {/* 종료 버튼 - 항상 맨 아래 */}
+        <div className="justify-center hidden pt-4 sm:flex sm:pt-0">
           <Button
             onClick={async () => {
               const gameId = games[selectedGameIndex].gameId;
@@ -95,7 +99,6 @@ export default function MatchPage() {
                 "정말로 이 게임을 종료하시겠습니까?"
               );
               if (!confirmed) return;
-
               try {
                 await updateGameIsFinished(gameId);
                 alert("게임이 종료되었습니다.");
@@ -107,15 +110,15 @@ export default function MatchPage() {
               }
             }}
             disabled={games[selectedGameIndex].isFinished}
-            className="px-4 py-2 text-white bg-red-600 rounded-xl hover:bg-red-700 disabled:opacity-50"
+            className="w-full px-4 py-2 text-sm text-white bg-red-600 sm:w-auto sm:text-base rounded-xl hover:bg-red-700 disabled:opacity-50"
           >
             게임 종료하기
           </Button>
         </div>
       </div>
 
-      {/* 🏟️ Match 리스트 */}
-      <div className="space-y-6">
+      {/* Match 리스트 */}
+      <div className="px-2 space-y-4 sm:space-y-6 sm:px-0">
         {selectedGame?.Matches?.length > 0 ? (
           selectedGame.Matches.map((match) => (
             <MatchCard
@@ -125,8 +128,34 @@ export default function MatchPage() {
             />
           ))
         ) : (
-          <p>경기 정보 없음</p>
+          <p className="text-center text-gray-500">경기 정보 없음</p>
         )}
+      </div>
+
+      {/* 종료 버튼 - 항상 맨 아래 */}
+      <div className="flex justify-center pb-4 sm:pt-0">
+        <Button
+          onClick={async () => {
+            const gameId = games[selectedGameIndex].gameId;
+            const confirmed = window.confirm(
+              "정말로 이 게임을 종료하시겠습니까?"
+            );
+            if (!confirmed) return;
+            try {
+              await updateGameIsFinished(gameId);
+              alert("게임이 종료되었습니다.");
+              setSelectedGameIndex((prev) =>
+                Math.min(games.length - 1, prev + 1)
+              );
+            } catch (err) {
+              alert("게임 종료에 실패했습니다.");
+            }
+          }}
+          disabled={games[selectedGameIndex].isFinished}
+          className="w-full px-4 py-2 text-sm text-white bg-red-600 sm:w-auto sm:text-base rounded-xl hover:bg-red-700 disabled:opacity-50"
+        >
+          게임 종료하기
+        </Button>
       </div>
     </div>
   );

@@ -60,7 +60,7 @@ export async function getGameDetailByDate(data: DateFilter) {
 }
 
 // 관심 게임 디테일 정보 가져오기
-export async function getInterestGameDetail() {
+export async function getInterestGame() {
   try {
     const response = await apiClient.get<InterestedGame[]>(`/interests/my`);
     return response.data;

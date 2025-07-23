@@ -13,11 +13,15 @@ import {
   FaBullhorn,
   FaCommentDots,
 } from "react-icons/fa";
+import { BiSolidLogOut } from "react-icons/bi";
+import { logout } from "@/utils/auth/auth";
+import { useRouter } from "next/navigation";
 
 export default function MyPage() {
   const [user, setUser] = useState<UserDetail>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const getLevelFromRate = (rate: number | 0) => {
     const safeRate = rate ?? 0;
@@ -41,6 +45,17 @@ export default function MyPage() {
     }
   };
 
+  const fetchLogout = async () => {
+    try {
+      await logout(); // 로그아웃 API 호출
+      alert("로그아웃에 성공했습니다!"); // 성공 알림
+      router.push("/"); // 홈으로 이동
+    } catch (err) {
+      console.error("로그아웃 실패:", err);
+      alert("로그아웃에 실패했습니다.");
+    }
+  };
+
   useEffect(() => {
     const fetchAll = async () => {
       await fetchUser();
@@ -49,7 +64,7 @@ export default function MyPage() {
   }, []);
 
   return (
-    <div className="grid max-w-6xl grid-cols-1 gap-6 px-4 py-8 mx-auto md:grid-cols-3">
+    <div className="grid max-w-screen-lg grid-cols-1 gap-6 px-4 py-8 mx-auto md:grid-cols-3">
       {/* 프로필 카드 */}
       <div className="flex flex-col col-span-1 gap-4 p-6 bg-white border shadow-sm rounded-xl">
         <div className="flex items-center justify-between">
@@ -102,6 +117,9 @@ export default function MyPage() {
             </li>
             <li className="flex items-center gap-2">
               <FaCog /> 설정
+            </li>
+            <li className="flex items-center gap-2 hover:scale-105">
+              <BiSolidLogOut onClick={() => fetchLogout()} /> 로그아웃
             </li>
           </ul>
         </div>

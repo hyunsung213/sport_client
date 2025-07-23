@@ -21,7 +21,7 @@ export default function GameInfoCard({ game }: { game?: GameDetail }) {
   const diff = Math.floor(gameDate.diff(today, "days").days);
   const [isPayOpen, setIsPayOpen] = useState(false);
   const participatedGames = useParticipatedGames();
-  const [alreadyConfirmed, setAlreadyConfirmed] = useState(false);
+  const isClosed = game?.isProceed === true;
 
   const formatCost = (cost: number) => {
     const num = typeof cost === "string" ? parseInt(cost, 10) : cost;
@@ -35,25 +35,10 @@ export default function GameInfoCard({ game }: { game?: GameDetail }) {
     }
   };
 
-  const isGameConfirmed = (
-    participations: ParticipationWithGame[],
-    gameId: number
-  ) => {
-    const found = participations.find((p) => p.gameId === gameId);
-    return found?.isConfirmed ?? false;
-  };
-
-  useEffect(() => {
-    if (participatedGames && game?.gameId) {
-      const result = isGameConfirmed(participatedGames, game.gameId);
-      setAlreadyConfirmed(result);
-    }
-  }, [participatedGames, game?.gameId]);
-
   return (
     <div className="w-full">
       <Card
-        className="w-full p-4 space-y-4 border border-gray-200 rounded-xl"
+        className="w-full p-4 space-y-4 border border-gray-200 shadow-sm rounded-xl sm:shadow-md"
         style={{ borderColor: brandColors.deepOrange }}
       >
         <CardContent className="space-y-4">
@@ -97,15 +82,16 @@ export default function GameInfoCard({ game }: { game?: GameDetail }) {
           </div>
 
           {/* 신청 버튼 */}
+          {/* 신청 버튼 */}
           <Button
-            className="w-full py-2 mt-2 text-base text-black transition-colors duration-200 bg-white border border-black hover:bg-black hover:text-white"
+            className="w-full py-2 mt-2 text-base text-black transition-colors duration-200 bg-white border border-black hover:bg-black hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={() => {
               setIsPayOpen(true);
               handleApply(game?.gameId);
             }}
-            disabled={alreadyConfirmed}
+            disabled={isClosed}
           >
-            신청하기
+            {isClosed ? "마감되었습니다" : "신청하기"}
           </Button>
           <PayModal
             open={isPayOpen}

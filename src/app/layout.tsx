@@ -12,13 +12,17 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="ko">
+    <html lang="ko" className="overflow-x-hidden">
       <AuthProvider>
         <ParticipationProvider>
-          <body className="flex flex-col items-center w-full min-h-screen">
+          <body className="flex flex-col w-full min-h-screen overflow-x-hidden max-w-screen">
             <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
+            <main className="w-full pt-16 overflow-x-hidden sm:pt-0">
+              {children}
+            </main>
+            <div className="hidden sm:block">
+              <Footer />
+            </div>
           </body>
         </ParticipationProvider>
       </AuthProvider>

@@ -82,75 +82,83 @@ export default function GameCard() {
   }, []);
 
   return (
-    <div className="flex items-center justify-center max-w-5xl">
-      <Carousel className="w-full">
-        <CarouselContent className="">
-          {games.map((game) => (
-            <CarouselItem key={game.gameId} className="p-2 basis-1/3">
-              <Card
-                className={`flex flex-col w-65 p-0 m-0 mx-auto overflow-hidden transition-transform shadow-lg cursor-pointer hover:scale-103 ${bgColor.skyblue}`}
-                onClick={() => {
-                  goToGameDetail(game.gameId);
-                }}
+    <div className="flex justify-center w-full">
+      <div className="w-full max-w-screen-lg px-3 sm:px-6 md:px-10">
+        <Carousel className="w-full">
+          <CarouselContent>
+            {games.map((game) => (
+              <CarouselItem
+                key={game.gameId}
+                className="p-2 sm:basis-1/2 md:basis-1/3"
               >
-                <div className="w-full h-50">
-                  {game.Place?.Photos?.length ? (
-                    <img
-                      src={getPhotoByURL(game.Place.Photos[0].photoUrl)}
-                      alt={game.Place?.placeName || "장소 이미지"}
-                      className="object-cover w-full h-full"
-                    />
-                  ) : (
-                    <div
-                      className={`flex items-center justify-center w-full h-full text-sm text-gray-500 ${bgColor.skyblue}`}
-                    >
-                      이미지 없음
-                    </div>
-                  )}
-                </div>
+                <Card
+                  className={`w-full max-w-sm mx-auto flex flex-col p-0 overflow-hidden transition-transform shadow-lg cursor-pointer hover:scale-103 ${bgColor.skyblue}`}
+                  onClick={() => goToGameDetail(game.gameId)}
+                >
+                  <div className="w-full h-40 sm:h-50">
+                    {game.Place?.Photos?.length ? (
+                      <img
+                        src={getPhotoByURL(game.Place.Photos[0].photoUrl)}
+                        alt={game.Place?.placeName || "장소 이미지"}
+                        className="object-cover w-full h-full"
+                      />
+                    ) : (
+                      <div
+                        className={`flex items-center justify-center w-full h-full text-xs sm:text-sm text-gray-500 ${bgColor.skyblue}`}
+                      >
+                        이미지 없음
+                      </div>
+                    )}
+                  </div>
 
-                <CardContent className="flex flex-col p-4 space-y-1 ">
-                  <div
-                    className={`flex justify-between text-xs ${fontColor.deepOrange}`}
-                  >
-                    <span>
-                      {game.Place.location.match(/.+?구/)?.[0] ??
-                        game.Place.location}
-                    </span>
-                  </div>
-                  <h3 className={`text-xl font-extrabold ${fontColor.olive}`}>
-                    {game.Place?.placeName}
-                  </h3>
-                  <div
-                    className={`flex justify-between text-sm font-bold text-gray-600`}
-                  >
-                    <span className={`${fontColor.blue}`}>
-                      {(() => {
-                        const dateObj = new Date(game.date);
-                        const pad = (n: number) =>
-                          n.toString().padStart(2, "0");
-                        const hours = pad(dateObj.getHours());
-                        const minutes = pad(dateObj.getMinutes());
-                        return `${hours}:${minutes}`;
-                      })()}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className={`font-bold ${fontColor.deepOrange}`}>
-                      {game.Users?.length || 0}
-                    </span>
-                    <span className="font-bold text-gray-500">
-                      / {game.numOfMember} 명
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
+                  <CardContent className="flex flex-col gap-1 p-3 sm:p-4 sm:gap-2">
+                    <div
+                      className={`flex justify-between text-[11px] sm:text-xs ${fontColor.deepOrange}`}
+                    >
+                      <span>
+                        {game.Place.location.match(/.+?구/)?.[0] ??
+                          game.Place.location}
+                      </span>
+                    </div>
+
+                    <h3
+                      className={`text-base sm:text-xl font-extrabold ${fontColor.olive}`}
+                    >
+                      {game.Place?.placeName}
+                    </h3>
+
+                    <div className="flex justify-between text-sm font-bold text-gray-600">
+                      <span className={`${fontColor.blue}`}>
+                        {(() => {
+                          const dateObj = new Date(game.date);
+                          const pad = (n: number) =>
+                            n.toString().padStart(2, "0");
+                          const hours = pad(dateObj.getHours());
+                          const minutes = pad(dateObj.getMinutes());
+                          return `${hours}:${minutes}`;
+                        })()}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-xs sm:text-sm">
+                      <span className={`font-bold ${fontColor.deepOrange}`}>
+                        {game.Users?.length || 0}
+                      </span>
+                      <span className="font-bold text-gray-500">
+                        / {game.numOfMember} 명
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <div className="hidden lg:block">
+            <CarouselPrevious />
+            <CarouselNext />
+          </div>
+        </Carousel>
+      </div>
     </div>
   );
 }
