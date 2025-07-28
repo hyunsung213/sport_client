@@ -109,7 +109,7 @@ export async function getAllPlaceDetail() {
   }
 }
 
-// supermanage 장소 세부 정보 가져오기
+// 참가한 게임의 세부 정보 가져오기
 export async function getMyParticipation() {
   try {
     const response = await apiClient.get<ParticipationWithGame[]>(

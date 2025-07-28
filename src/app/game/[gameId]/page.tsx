@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/dialog";
 import { bgColor, fontColor } from "@/styles/color";
 import PayModal from "@/components/detailPage/PayModal";
+import { useAuth } from "@/context/AuthContext";
 
 interface Props {
   params: Promise<{ gameId: string }>;
@@ -46,6 +47,8 @@ export default function GameDetailPage() {
   const [isLiked, setIsLiked] = useState(false);
   const [open, setOpen] = useState(false);
   const [isPayOpen, setIsPayOpen] = useState(false);
+  const { user } = useAuth();
+  const router = useRouter();
 
   // GameList 불러오기
   const fetchGames = async () => {
@@ -55,7 +58,6 @@ export default function GameDetailPage() {
         getGameDetail(gameId),
         getInterestGame(),
       ]);
-      console.log("게임 상세 정보:", resultGame);
       setGame(resultGame);
       setInterestGames(resultInterestGames || []);
     } catch (err) {
@@ -80,6 +82,11 @@ export default function GameDetailPage() {
 
   // 관심 게임 토글 함수 - 관심 게임 등록/해제
   const toggleLike = async (gameId: number) => {
+    if (!user) {
+      alert("로그인이 필요합니다.");
+      router.push("/auth/login");
+      return;
+    }
     if (isLiked) {
       setIsLiked(false);
       await deleteInterestGame(gameId); // 서버 요청
@@ -94,14 +101,35 @@ export default function GameDetailPage() {
   // URL 복사 기능
   const handleCopyUrl = () => {
     const currentUrl = window.location.href;
-    navigator.clipboard
-      .writeText(currentUrl)
-      .then(() => {
-        alert("현재 페이지 URL이 복사되었습니다!");
-      })
-      .catch(() => {
-        alert("복사에 실패했습니다. 브라우저 설정을 확인하세요.");
-      });
+
+    if (navigator.share) {
+      // Web Share API 지원 (모바일)
+      navigator
+        .share({
+          title: "스포츠 플랫폼",
+          text: "이 경기를 같이 확인해보세요!",
+          url: currentUrl,
+        })
+        .catch((err) => {
+          console.warn("공유 실패:", err);
+        });
+    } else if (
+      navigator.clipboard &&
+      typeof navigator.clipboard.writeText === "function"
+    ) {
+      // 클립보드 복사 지원 (데스크탑 or 일부 모바일)
+      navigator.clipboard
+        .writeText(currentUrl)
+        .then(() => {
+          alert("현재 페이지 URL이 복사되었습니다!");
+        })
+        .catch(() => {
+          alert("복사에 실패했습니다. 브라우저 설정을 확인하세요.");
+        });
+    } else {
+      // 완전히 지원되지 않는 브라우저
+      alert("URL 복사를 지원하지 않는 브라우저입니다.");
+    }
   };
 
   // 신청하기 기능
@@ -139,40 +167,45 @@ export default function GameDetailPage() {
         >
           {/* 메인 이미지 */}
           <div className="w-full sm:col-span-2">
-            <img
-              src={images[0] || fallback}
-              alt={game?.Place?.placeName || "장소 이미지"}
-              className="object-cover w-full h-full rounded-lg max-h-[240px] sm:max-h-none"
-            />
+            {images[0] ? (
+              <img
+                src={images[0]}
+                alt={game?.Place?.placeName || "장소 이미지"}
+                className="object-cover w-full h-full rounded-lg max-h-[240px] sm:max-h-none"
+              />
+            ) : (
+              <div className="flex items-center justify-center w-full h-[240px] rounded-lg bg-gray-100 text-sm text-gray-500">
+                이미지 없음
+              </div>
+            )}
           </div>
 
           {/* 서브 이미지 (PC만 보임) */}
-          <div className="flex-col hidden gap-4 sm:flex">
-            <div className="flex gap-4">
-              <img
-                src={images[1] || fallback}
-                className="object-cover w-full h-full rounded-lg"
-              />
-              <img
-                src={images[2] || fallback}
-                className="object-cover w-full h-full rounded-lg"
-              />
-            </div>
-            <div className="flex gap-4">
-              <img
-                src={images[3] || fallback}
-                className="object-cover w-full h-full rounded-lg"
-              />
-              <img
-                src={images[4] || fallback}
-                className="object-cover w-full h-full rounded-lg"
-              />
-            </div>
+          <div className="hidden sm:grid sm:grid-cols-2 sm:gap-4 sm:col-span-2">
+            {[1, 2, 3, 4].map((idx) => (
+              <div key={idx} className="w-full aspect-[4/3] relative">
+                {images[idx] ? (
+                  <img
+                    src={images[idx]}
+                    alt={`image-${idx}`}
+                    className="absolute inset-0 object-cover w-full h-full rounded-lg"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center w-full h-full text-sm text-gray-500 bg-gray-100 rounded-lg">
+                    이미지 없음
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
 
         {/* 모달 안 전체 이미지 리스트 */}
-        <DialogContent className="max-w-screen-lg sm:max-h-[90vh] sm:overflow-y-auto p-0">
+        <DialogContent
+          className="w-full max-w-[95vw] sm:max-w-screen-md mx-auto sm:max-h-[90vh] sm:overflow-y-auto p-0 rounded-lg
+  "
+        >
+          {" "}
           <DialogTitle className="p-4">전체 이미지 보기</DialogTitle>
           <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 max-h-[70vh] overflow-y-auto">
             {images.length > 0 ? (
@@ -202,18 +235,6 @@ export default function GameDetailPage() {
                 <h1 className="text-2xl font-semibold">
                   {game?.Place?.placeName}
                 </h1>
-
-                {/* ✅ 신청 인원 표시 */}
-                {game?.Users && (
-                  <span
-                    className={`px-3 py-1 text-sm font-semibold ${fontColor.blue} ${bgColor.skyblue} rounded-full`}
-                  >
-                    <b className={`${fontColor.deepOrange}`}>
-                      {game.Users.length}
-                    </b>{" "}
-                    / {game.numOfMember}명
-                  </span>
-                )}
               </div>
               <p className="text-sm text-gray-500">
                 {game?.Place?.location?.split("/")?.[0]}
@@ -299,7 +320,7 @@ export default function GameDetailPage() {
       </div>
 
       {/* 지도 영역 */}
-      <div>
+      <div className="overflow-hidden pb-15 sm:pb-0">
         <LocationMap address={game?.Place?.location || ""} />
       </div>
     </div>

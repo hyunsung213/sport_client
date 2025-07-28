@@ -76,7 +76,7 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="max-w-screen-lg min-h-screen p-6 pt-10 mx-auto">
+    <div className="max-w-screen-lg min-h-screen p-6 pt-30 sm:w-[400px] mx-auto">
       <Card className="p-6 space-y-3">
         <h2 className="text-xl font-bold text-center">회원가입</h2>
         <Input
@@ -99,10 +99,10 @@ export default function SignUpPage() {
           onChange={handleChange}
         />
         <Select onValueChange={(val) => setForm({ ...form, city: val })}>
-          <SelectTrigger className="text-sm h-9">
+          <SelectTrigger className="text-sm cursor-pointer h-9">
             <SelectValue placeholder="지역구 선택" />
           </SelectTrigger>
-          <SelectContent className="overflow-y-auto max-h-40">
+          <SelectContent className="overflow-y-auto cursor-pointer max-h-40">
             <SelectGroup>
               <SelectLabel>서울</SelectLabel>
               {seoulDistricts.map((district) => (
@@ -122,6 +122,7 @@ export default function SignUpPage() {
         <div className="flex items-center gap-3">
           <label className="flex items-center gap-2">
             <Switch
+              className="cursor-pointer"
               checked={form.isManager}
               onCheckedChange={(val) =>
                 setForm((prev) => ({ ...prev, isManager: val }))
@@ -130,7 +131,11 @@ export default function SignUpPage() {
             장소 관리자
           </label>
         </div>
-        <Button className="w-full" onClick={signUpCheck} disabled={loading}>
+        <Button
+          className="w-full cursor-pointer"
+          onClick={signUpCheck}
+          disabled={loading}
+        >
           {loading ? "가입 중..." : "회원가입"}
         </Button>
         {error && <p className="text-sm text-center text-red-500">{error}</p>}

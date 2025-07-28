@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { postPlaceDetail } from "@/utils/post"; // POST 요청 함수
 
 import { PlaceDetail } from "@/utils/interface/place";
+import { useRef } from "react";
 
 const optionFields = [
   { id: "isShuttlecock", label: "셔틀콕", name: "Option.isShuttlecock" },
@@ -31,7 +32,7 @@ export default function CreatePlacePage() {
     formState: { isSubmitting },
   } = useForm<PlaceDetail>();
 
-  const locationValue = watch("location");
+  const locationValue = useRef(watch("location"));
 
   const onSubmit = async (data: PlaceDetail) => {
     try {
@@ -56,7 +57,7 @@ export default function CreatePlacePage() {
             <Input {...register("placeName")} required />
           </div>
           <AddressInput
-            initialValue={locationValue || ""}
+            initialValue={locationValue.current || ""}
             onCombinedAddressChange={(addr) => setValue("location", addr)}
           />
         </div>

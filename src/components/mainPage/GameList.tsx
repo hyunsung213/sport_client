@@ -29,6 +29,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "../ui/carousel";
+import { useAuth } from "@/context/AuthContext";
 
 export default function GameList() {
   const today = new Date();
@@ -51,6 +52,7 @@ export default function GameList() {
   const [error, setError] = useState("");
   const [selectedGameId, setSelectedGameId] = useState<number | null>(null);
   const [interestGames, setInterestGames] = useState<InterestedGame[]>([]);
+  const { user } = useAuth();
 
   const [startIndex, setStartIndex] = useState(0); // 현재 보여줄 날짜 인덱스 시작점
   const datesToShow = 5;
@@ -71,8 +73,8 @@ export default function GameList() {
       ]);
       setGames(resultGames || []);
       setInterestGames(resultInterestGames || []);
-      console.log("게임잊ㅂ: ", resultGames);
-      console.log("인터레스게임잊ㅂ: ", resultGames);
+      console.log("게임: ", resultGames);
+      console.log("관심게임: ", resultInterestGames);
     } catch (err) {
       console.error(err);
       setError("게임 데이터를 불러오는 중 오류가 발생했습니다.");
@@ -104,6 +106,9 @@ export default function GameList() {
 
   // 관심 게임 토글 함수 - 관심 게임 등록/해제
   const toggleLike = async (gameId: number) => {
+    if (!user) {
+      router.push("/auth/login");
+    }
     if (isInterestedGame(gameId)) {
       await deleteInterestGame(gameId); // 서버 요청
       await fetchGames(); // 관심 게임 목록 새로고침
@@ -128,45 +133,54 @@ export default function GameList() {
   }, []);
 
   return (
-    <div className="flex flex-col w-full max-w-screen-lg gap-4 px-1 sm:px-6">
-      <Carousel
-        opts={{
-          align: "center", // 가운데 정렬
-          slidesToScroll: 5, // 한 번에 5개 이동
-          containScroll: "trimSnaps", // 끝에서 정렬 자연스럽게
-        }}
-        className={`w-full rounded-full justify-between px-10 ${bgColor.skyblue}`}
-      >
-        {/* ◀ 왼쪽 버튼 (PC 전용, Carousel 내부에 위치) */}
-        <CarouselPrevious className="absolute left-0 z-10 hidden -translate-y-1/2 lg:flex top-1/2" />
+    <div className="flex flex-col w-full max-w-screen-lg px-1 sm:px-6">
+      <div className="relative w-full pb-3">
+        {/* Fade 효과용 오버레이 (왼쪽) */}
+        {startIndex + totalDates - 1 === new Date(selectedDate).getDate() && (
+          <div className="absolute top-0 left-0 z-20 h-4 w-6 sm:w-8 pointer-events-none bg-gradient-to-r from-[#e0f7fa] to-transparent" />
+        )}
 
-        {/* 날짜 목록 */}
-        <CarouselContent className="flex justify-start w-full gap-1 -ml-3">
-          {Array.from({ length: totalDates }, (_, i) => {
-            const index = startIndex + i;
-            const newDate = new Date(today);
-            newDate.setDate(today.getDate() + index);
+        {/* Fade 효과용 오버레이 (오른쪽) */}
+        {startIndex === new Date(selectedDate).getDate() && (
+          <div className="absolute top-0 right-0 z-20 h-4 w-6 sm:w-8 pointer-events-none bg-gradient-to-l from-[#e0f7fa] to-transparent" />
+        )}
 
-            const day = daysKor[newDate.getDay()];
-            const dateNum = newDate.getDate();
-            const formattedDate = `${newDate.getFullYear()}-${String(
-              newDate.getMonth() + 1
-            ).padStart(2, "0")}-${String(dateNum).padStart(2, "0")}`;
+        <Carousel
+          opts={{
+            align: "center",
+            slidesToScroll: 5,
+            containScroll: "trimSnaps",
+          }}
+          className={`w-full justify-between rounded-full px-2 sm:px-4 ${bgColor.skyblue}`}
+        >
+          <CarouselPrevious className="absolute left-0 z-10 hidden -translate-y-1/2 lg:flex top-1/2" />
 
-            const isSelected = selectedDate === formattedDate;
-            const isSaturday = newDate.getDay() === 6;
-            const isSunday = newDate.getDay() === 0;
+          <CarouselContent className="flex justify-start w-full gap-1 -ml-3">
+            {Array.from({ length: totalDates }, (_, i) => {
+              const index = startIndex + i;
+              const newDate = new Date(today);
+              newDate.setDate(today.getDate() + index);
 
-            return (
-              <CarouselItem
-                key={i}
-                className="basis-[20%] sm:basis-[10%] flex justify-center"
-              >
-                <button
-                  onClick={() => setSelectedDate(formattedDate)}
-                  className={`
-              w-10 h-10 sm:w-12 sm:h-10 rounded-full flex flex-col items-center justify-center
-              text-[10px] sm:text-xs font-bold transition-all hover:scale-105
+              const day = daysKor[newDate.getDay()];
+              const dateNum = newDate.getDate();
+              const formattedDate = `${newDate.getFullYear()}-${String(
+                newDate.getMonth() + 1
+              ).padStart(2, "0")}-${String(dateNum).padStart(2, "0")}`;
+
+              const isSelected = selectedDate === formattedDate;
+              const isSaturday = newDate.getDay() === 6;
+              const isSunday = newDate.getDay() === 0;
+
+              return (
+                <CarouselItem
+                  key={i}
+                  className="basis-[20%] sm:basis-[10%] flex justify-center"
+                >
+                  <button
+                    onClick={() => setSelectedDate(formattedDate)}
+                    className={`
+              w-12 h-12 rounded-full flex flex-col items-center justify-center
+              text-[11px] font-extrabold leading-tight transition-all hover:scale-105
               ${isSelected ? `${bgColor.orange} text-white` : "bg-transparent"}
               ${
                 isSaturday && !isSelected
@@ -178,18 +192,18 @@ export default function GameList() {
                   : ""
               }
             `}
-                >
-                  <span>{dateNum}</span>
-                  <span>{day}</span>
-                </button>
-              </CarouselItem>
-            );
-          })}
-        </CarouselContent>
+                  >
+                    <span>{dateNum}</span>
+                    <span className="text-[10px]">{day}</span>
+                  </button>
+                </CarouselItem>
+              );
+            })}
+          </CarouselContent>
 
-        {/* ▶ 오른쪽 버튼 (PC 전용, Carousel 내부에 위치) */}
-        <CarouselNext className="absolute right-0 z-10 hidden -translate-y-1/2 lg:flex top-1/2" />
-      </Carousel>
+          <CarouselNext className="absolute right-0 z-10 hidden -translate-y-1/2 lg:flex top-1/2" />
+        </Carousel>
+      </div>
 
       {/* 지역구 선택 */}
       <div>
@@ -234,37 +248,40 @@ export default function GameList() {
             return (
               <div
                 key={game.gameId}
-                className={`flex flex-wrap sm:flex-nowrap items-center justify-between gap-1 px-3 sm:px-4 py-3 cursor-pointer rounded-xl hover:scale-102`}
+                className={`flex sm:flex-nowrap items-center justify-between gap-1 px-3 sm:px-10 py-3 cursor-pointer rounded-xl hover:scale-102`}
                 style={{
                   backgroundColor: isOdd
-                    ? brandColors.skyolive
+                    ? brandColors.skyorange
                     : brandColors.skyblue,
                 }}
                 onClick={() => goToGameDetail(game.gameId)}
               >
-                <div className="text-xs font-bold text-left w-14 sm:w-16 sm:text-sm">
+                {/* 시간 */}
+                <div className="text-base font-bold text-left w-14 sm:w-16 sm:text-lg">
                   {dateTime.toFormat("HH:mm")}
                 </div>
 
-                <div className="flex items-center justify-between flex-1 gap-2">
-                  {/* 장소명 - 길게 왼쪽에 보여줌 */}
+                {/* 장소 및 지역 */}
+                <div className="flex items-center justify-between flex-1 gap-2 ml-5">
                   <div
-                    className={`text-xs sm:text-sm text-left truncate ${fontColor.black}`}
-                    style={{ maxWidth: "60%" }} // 필요 시 비율 조절
+                    className={`text-left ${fontColor.black}`}
+                    style={{ maxWidth: "90%" }}
                   >
-                    {game.Place.placeName}
-                  </div>
-
-                  {/* 주소 - 오른쪽 정렬, 말줄임 없이 고정 */}
-                  <div className="text-xs text-right text-gray-500 sm:text-sm whitespace-nowrap">
-                    {toDistrictOnly(game.Place.location)}
+                    <div className="text-xs font-semibold truncate sm:text-sm">
+                      {game.Place.placeName}
+                    </div>
+                    <div className="text-[10px] sm:text-xs text-gray-600 truncate">
+                      {toDistrictOnly(game.Place.location)}
+                    </div>
                   </div>
                 </div>
 
+                {/* 인원 */}
                 <div className="w-20 text-xs text-right text-gray-600 sm:text-sm">
                   {game.Users.length}명 / {game.numOfMember}명
                 </div>
 
+                {/* 좋아요 버튼 */}
                 <div
                   className="ml-2 cursor-pointer sm:ml-4"
                   onClick={(e) => {

@@ -43,8 +43,6 @@ export default function RateCard({ users }: { users: UserDetail[] }) {
     "#d0ed57",
   ];
 
-  console.log("totla:, ", totalUsers);
-
   return (
     <div className="w-full pt-6 space-y-4 sm:space-y-6">
       {/* ✅ 예쁜 배너 */}

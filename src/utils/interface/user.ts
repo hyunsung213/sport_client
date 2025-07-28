@@ -15,6 +15,7 @@ export interface UserDetail {
   userId: number;
   userName: string;
   email: string;
+  city: string;
   phoneNum: string;
   isManager: boolean;
   isSupporter: boolean;

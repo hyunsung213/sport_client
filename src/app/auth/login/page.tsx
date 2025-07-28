@@ -35,8 +35,8 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="justify-center max-w-screen-lg min-h-screen p-6 mx-auto">
-      <div className="justify-center p-6 mx-auto mt-10 space-y-6 bg-white shadow rounded-xl">
+    <div className="justify-center max-w-screen-lg min-h-screen p-6 mx-auto pt-30">
+      <div className="w-full sm:w-[400px] bg-white p-6 space-y-6 shadow-2xl rounded-xl mx-auto">
         <h2 className="text-2xl font-bold text-center">로그인</h2>
         <form
           onSubmit={(e) => {
@@ -58,7 +58,7 @@ export default function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
             />
             <Button
-              className="w-full text-white bg-black hover:bg-gray-800"
+              className="w-full text-white bg-black cursor-pointer hover:bg-gray-800"
               onClick={handleLogin}
             >
               로그인하기
@@ -80,7 +80,7 @@ export default function LoginForm() {
           <a href={getKakaoLoginUrl()}>
             <Button
               variant="ghost"
-              className="flex items-center justify-center w-10 h-10 p-0 bg-yellow-300 rounded-full hover:bg-yellow-400"
+              className="flex items-center justify-center w-10 h-10 p-0 bg-yellow-300 rounded-full cursor-pointer hover:bg-yellow-400"
             >
               <Image
                 src="/images/KakaoTalk_logo.png"
@@ -94,7 +94,7 @@ export default function LoginForm() {
           <a href={getGoogleLoginUrl()}>
             <Button
               variant="ghost"
-              className="flex items-center justify-center w-10 h-10 p-0 bg-white border border-gray-300 rounded-full hover:bg-gray-100"
+              className="flex items-center justify-center w-10 h-10 p-0 bg-white border border-gray-300 rounded-full cursor-pointer hover:bg-gray-100"
             >
               <Image
                 src="/images/Google_logo.png"
@@ -108,7 +108,7 @@ export default function LoginForm() {
 
         <Button
           variant="link"
-          className="w-full text-sm text-gray-600 hover:text-black"
+          className="w-full text-sm text-gray-600 cursor-pointer hover:text-black"
           onClick={goToSignup}
         >
           회원가입하기

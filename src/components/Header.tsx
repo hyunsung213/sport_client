@@ -31,7 +31,7 @@ export default function Header() {
     <header className="fixed top-0 z-50 w-full bg-white border-b shadow-sm sm:static">
       <div className="w-full px-4 sm:px-6">
         {/* ✅ 이 부분을 감싸는 div에 max-width 적용 */}
-        <div className="flex items-center justify-between w-full h-16 max-w-screen-lg mx-auto">
+        <div className="flex items-center justify-between w-full max-w-screen-lg mx-auto h-15 sm:p-5">
           {/* 왼쪽 로고 */}
           <div
             className="flex items-center space-x-2 cursor-pointer sm:space-x-3"
@@ -42,7 +42,7 @@ export default function Header() {
               alt="로고"
               width={40}
               height={40}
-              className="sm:w-[60px] sm:h-[60px]"
+              className="hidden sm:block sm:w-[60px] sm:h-[60px]" // ✅ 여기
             />
             <span
               className={`text-lg sm:text-2xl font-bold tracking-tight ${fontColor.orange}`}
@@ -58,7 +58,7 @@ export default function Header() {
                 {user.isManager && (
                   <div className="hidden sm:block">
                     <button
-                      className={`${fontColor.olive} text-xs font-bold sm:text-sm hover:scale-105`}
+                      className={`${fontColor.olive} text-xs font-bold sm:text-sm cursor-pointer hover:scale-105`}
                       onClick={() => router.push("/managePage/calendar")}
                     >
                       내 장소관리
@@ -69,7 +69,7 @@ export default function Header() {
                 {user.isSuperManager && (
                   <div className="hidden sm:block">
                     <button
-                      className={`${fontColor.olive} font-bold text-xs sm:text-sm hover:scale-105`}
+                      className={`${fontColor.olive} font-bold text-xs sm:text-sm cursor-pointer hover:scale-105`}
                       onClick={() => router.push("/supermanagePage/makeGame")}
                     >
                       게임 만들기
@@ -79,7 +79,7 @@ export default function Header() {
 
                 {user.isSupporter && (
                   <button
-                    className="flex items-center justify-center p-0 text-xs bg-transparent border-none sm:text-sm hover:scale-105"
+                    className="flex items-center justify-center p-0 text-xs bg-transparent border-none cursor-pointer sm:text-sm hover:scale-105"
                     onClick={() => router.push("/supportPage/match")}
                   >
                     {/* 모바일: 아이콘만 */}
@@ -109,7 +109,7 @@ export default function Header() {
                 </button>
 
                 <button
-                  className={`${fontColor.deepOrange} text-xs sm:text-sm font-bold hover:scale-105 hidden sm:block`}
+                  className={`${fontColor.deepOrange} text-xs sm:text-sm font-bold cursor-pointer hover:scale-105 hidden sm:block`}
                   onClick={fetchLogout}
                 >
                   로그아웃
@@ -117,7 +117,7 @@ export default function Header() {
               </>
             ) : (
               <button
-                className={`${bgColor.white} ${fontColor.blue} text-xs sm:text-sm font-bold hover:scale-105`}
+                className={`${bgColor.white} ${fontColor.blue} text-xs sm:text-sm cursor-pointer font-bold hover:scale-105`}
                 onClick={() => router.push("/auth/login")}
               >
                 로그인

@@ -95,12 +95,12 @@ export default function GameCard() {
                   className={`w-full max-w-sm mx-auto flex flex-col p-0 overflow-hidden transition-transform shadow-lg cursor-pointer hover:scale-103 ${bgColor.skyblue}`}
                   onClick={() => goToGameDetail(game.gameId)}
                 >
-                  <div className="w-full h-40 sm:h-50">
+                  <div className="w-full h-45 sm:h-50">
                     {game.Place?.Photos?.length ? (
                       <img
                         src={getPhotoByURL(game.Place.Photos[0].photoUrl)}
                         alt={game.Place?.placeName || "장소 이미지"}
-                        className="object-cover w-full h-full"
+                        className="object-cover w-full h-full fade-mask md:fade-mask"
                       />
                     ) : (
                       <div
@@ -113,7 +113,7 @@ export default function GameCard() {
 
                   <CardContent className="flex flex-col gap-1 p-3 sm:p-4 sm:gap-2">
                     <div
-                      className={`flex justify-between text-[11px] sm:text-xs ${fontColor.deepOrange}`}
+                      className={`flex justify-between text-[11px] sm:text-xs ${fontColor.gray}`}
                     >
                       <span>
                         {game.Place.location.match(/.+?구/)?.[0] ??
@@ -122,7 +122,7 @@ export default function GameCard() {
                     </div>
 
                     <h3
-                      className={`text-base sm:text-xl font-extrabold ${fontColor.olive}`}
+                      className={`text-base sm:text-xl font-extrabold ${fontColor.orange}`}
                     >
                       {game.Place?.placeName}
                     </h3>

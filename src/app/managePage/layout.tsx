@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 export default function ManageLayout({ children }: { children: ReactNode }) {
   return (
     <div lang="ko">
-      <div>
+      <div className="max-w-screen-lg min-h-screen pt-10 mx-auto">
         <ClientWrapper>{children}</ClientWrapper>
       </div>
     </div>
