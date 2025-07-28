@@ -21,8 +21,12 @@ export default function MatchCard({
   match: MatchDetail;
   isFinished: boolean;
 }) {
-  const [teamAScore, setTeamAScore] = useState<number>(match.teamAScore || 0);
-  const [teamBScore, setTeamBScore] = useState<number>(match.teamBScore || 0);
+  const [teamAScore, setTeamAScore] = useState<string>(
+    match.teamAScore?.toString() ?? ""
+  );
+  const [teamBScore, setTeamBScore] = useState<string>(
+    match.teamBScore?.toString() ?? ""
+  );
   const [winnerTeam, setWinnerTeam] = useState<string>(match.winnerTeam);
   const [playerOfMatch, setPlayerOfMatch] = useState<number>();
   const [isSaving, setIsSaving] = useState(false);
@@ -38,13 +42,34 @@ export default function MatchCard({
     return aScore > bScore ? "TeamA" : "TeamB";
   };
 
+  const handleTeamAScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    // 숫자 이외 문자 제거 (빈 문자열은 허용)
+    if (/^\d*$/.test(value)) {
+      setTeamAScore(value);
+    }
+  };
+
+  const handleTeamBScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    // 숫자 이외 문자 제거 (빈 문자열은 허용)
+    if (/^\d*$/.test(value)) {
+      setTeamBScore(value);
+    }
+  };
+
   // 📦 점수 저장용 데이터 생성
   const prepareScoreData = (): IMatchScore => {
-    const winner = decideWinnerTeam(teamAScore, teamBScore);
+    const aScore = Number(teamAScore) || 0;
+    const bScore = Number(teamBScore) || 0;
+    const winner = decideWinnerTeam(aScore, bScore);
+
     return {
       matchId,
-      teamAScore,
-      teamBScore,
+      teamAScore: aScore,
+      teamBScore: bScore,
       winnerTeam: winner,
       playerOfMatch,
     };
@@ -85,26 +110,36 @@ export default function MatchCard({
       <div className="grid items-start grid-cols-3 gap-6 text-center">
         {/* === Team A === */}
         <div>
-          <p className="flex items-center justify-center gap-2 text-lg font-bold text-blue-700">
-            Team A
-            <span className="text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-800 font-medium">
-              평균{" "}
+          <p className="flex items-center justify-center gap-1 text-xs font-bold text-blue-700 sm:gap-2 sm:text-sm">
+            <span className="whitespace-nowrap">Team A</span>
+            <span className="min-w-[32px] px-1.5 py-0.5 rounded-full bg-orange-100 text-orange-800 text-[11px] sm:text-xs font-semibold text-center">
               {calculateTeamLevel(
-                match.TeamA.PlayerA.Rate?.rateValue,
-                match.TeamA.PlayerB.Rate?.rateValue
+                match.TeamA.PlayerA.Rate?.rateValue ?? 0,
+                match.TeamA.PlayerB.Rate?.rateValue ?? 0
               )}
             </span>
           </p>
+
           <ul className="mt-2 space-y-1">
             {[match.TeamA.PlayerA, match.TeamA.PlayerB].map((player) => (
               <li
                 key={player.userId}
-                className="flex items-center justify-center gap-2"
+                className="flex items-center justify-center gap-2 whitespace-nowrap"
               >
-                <span className="font-medium text-gray-800">
+                <span
+                  className="text-sm font-medium text-gray-800 truncate sm:text-base"
+                  style={{
+                    maxWidth: "8ch", // 한글 4글자 = 약 8ch (1자당 2ch 잡기)
+                    display: "inline-block", // truncate가 span에 적용되게 함
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                  title={player.userName} // 전체 이름 툴팁으로 제공
+                >
                   {player.userName}
                 </span>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-800 font-semibold">
+                <span className="min-w-[32px] px-1.5 py-0.5 rounded-full bg-orange-100 text-orange-800 text-[11px] sm:text-xs font-semibold text-center">
                   {getLevelFromRate(player.Rate?.rateValue)}
                 </span>
               </li>
@@ -112,12 +147,13 @@ export default function MatchCard({
           </ul>
           <div className="flex justify-center mt-3">
             <Input
-              type="number"
+              type="text"
+              inputMode="numeric"
+              pattern="\d*"
               value={teamAScore}
-              onChange={(e) => setTeamAScore(Number(e.target.value))}
+              onChange={handleTeamAScoreChange}
               className="text-center w-28"
               placeholder="점수"
-              min={0}
               disabled={isDisabled}
             />
           </div>
@@ -130,26 +166,36 @@ export default function MatchCard({
 
         {/* === Team B === */}
         <div>
-          <p className="flex items-center justify-center gap-2 text-lg font-bold text-red-600">
-            Team B
-            <span className="text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-800 font-medium">
-              평균{" "}
+          <p className="flex items-center justify-center gap-1 text-xs font-bold text-red-700 sm:gap-2 sm:text-sm">
+            <span className="whitespace-nowrap">Team B</span>
+            <span className="min-w-[32px] px-1.5 py-0.5 rounded-full bg-orange-100 text-orange-800 text-[11px] sm:text-xs font-semibold text-center">
               {calculateTeamLevel(
-                match.TeamB.PlayerA.Rate?.rateValue,
-                match.TeamB.PlayerB.Rate?.rateValue
+                match.TeamB.PlayerA.Rate?.rateValue ?? 0,
+                match.TeamB.PlayerB.Rate?.rateValue ?? 0
               )}
             </span>
           </p>
+
           <ul className="mt-2 space-y-1">
             {[match.TeamB.PlayerA, match.TeamB.PlayerB].map((player) => (
               <li
                 key={player.userId}
-                className="flex items-center justify-center gap-2"
+                className="flex items-center justify-center gap-2 whitespace-nowrap"
               >
-                <span className="font-medium text-gray-800">
+                <span
+                  className="text-sm font-medium text-gray-800 truncate sm:text-base"
+                  style={{
+                    maxWidth: "8ch", // 한글 4글자 = 약 8ch (1자당 2ch 잡기)
+                    display: "inline-block", // truncate가 span에 적용되게 함
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                  title={player.userName} // 전체 이름 툴팁으로 제공
+                >
                   {player.userName}
                 </span>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-800 font-semibold">
+                <span className="min-w-[32px] px-1.5 py-0.5 rounded-full bg-orange-100 text-orange-800 text-[11px] sm:text-xs font-semibold text-center">
                   {getLevelFromRate(player.Rate?.rateValue)}
                 </span>
               </li>
@@ -157,12 +203,13 @@ export default function MatchCard({
           </ul>
           <div className="flex justify-center mt-3">
             <Input
-              type="number"
+              type="text"
+              inputMode="numeric"
+              pattern="\d*"
               value={teamBScore}
-              onChange={(e) => setTeamBScore(Number(e.target.value))}
+              onChange={handleTeamBScoreChange}
               className="text-center w-28"
               placeholder="점수"
-              min={0}
               disabled={isDisabled}
             />
           </div>
@@ -176,7 +223,7 @@ export default function MatchCard({
           onValueChange={(value) => setPlayerOfMatch(Number(value))}
           disabled={isDisabled}
         >
-          <SelectTrigger className="w-full">
+          <SelectTrigger className="w-full truncate whitespace-nowrap">
             <SelectValue placeholder="선수를 선택하세요" />
           </SelectTrigger>
           <SelectContent>

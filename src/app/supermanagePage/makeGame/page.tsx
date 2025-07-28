@@ -171,7 +171,7 @@ export default function CreateGamePage() {
   }, []);
 
   return (
-    <div className="p-6 mx-auto mt-6 space-y-8 bg-white border shadow-md w-5xl rounded-2xl">
+    <div className="p-6 mx-auto mt-6 mb-6 space-y-8 bg-white border shadow-md w-5xl rounded-2xl">
       {/* 상단: 타이틀 + 셀렉터 */}
       <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
         <h2 className="w-full text-2xl font-bold">게임 만들기</h2>

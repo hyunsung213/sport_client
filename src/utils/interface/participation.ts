@@ -1,4 +1,4 @@
-import { Game } from "./game";
+import { Game, GameDetailForMy } from "./game";
 
 export interface Participation {
   gameId: number;
@@ -10,5 +10,5 @@ export interface ParticipationWithGame {
   gameId: number;
   userId: number;
   isConfirmed: boolean;
-  Game: Game;
+  Game: GameDetailForMy;
 }

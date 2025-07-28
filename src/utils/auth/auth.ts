@@ -15,13 +15,13 @@ export interface formForSocial {
   isManager: boolean;
 }
 
-// ✅ 로그인: 토큰 저장까지 처리
+// 헤더 제거 로그인 함수
 export async function login(data: { email: string; password: string }) {
   try {
     const response = await apiClient.post("/auth/login", data);
     const token = response.data.token;
     if (token) {
-      localStorage.setItem("token", token); // ✅ 토큰 저장
+      localStorage.setItem("token", token);
     }
     console.log("로그인에 성공했습니다!!");
     return response.data;
@@ -110,6 +110,18 @@ export async function signUpForSocial(data: formForSocial) {
     return response.data;
   } catch (error) {
     console.error("소셜 회원가입에 실패했습니다. ", error);
+    throw error;
+  }
+}
+
+// ✅ 개인정보 수정
+export async function updateMyProfile(data: form) {
+  try {
+    const response = await apiClient.put("/users/edit/", data);
+    console.log("개인정보 수정에 성공했습니다.");
+    return response.data;
+  } catch (error) {
+    console.error("개인정보 수정에 실패했습니다. ", error);
     throw error;
   }
 }

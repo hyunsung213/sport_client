@@ -47,7 +47,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // ✅ 로그인 상태 확인 및 보호 라우팅
   useEffect(() => {
     const isAllowedWithoutLogin =
-      pathname === "/" || pathname.startsWith("/game");
+      pathname === "/" ||
+      pathname.startsWith("/game") ||
+      pathname === "/auth/signup";
 
     if (!loading && !user && !isAllowedWithoutLogin) {
       router.replace("/auth/login"); // 로그인 페이지로 이동

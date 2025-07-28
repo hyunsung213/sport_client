@@ -53,6 +53,21 @@ export interface GameDetailForSupporter {
   Matches: MatchDetail[];
 }
 
+export interface GameDetailForMy {
+  gameId: number;
+  placeId: number;
+  date: string;
+  numOfMember: number;
+  cost: number;
+  isProceed: boolean;
+  isFinished: boolean;
+  Supporter: User;
+  createdAt: string;
+  updatedAt: string;
+  Place: PlaceDetail;
+  Matches: MatchDetail[];
+}
+
 export interface InterestedGame {
   gameId: number;
   userId: number;

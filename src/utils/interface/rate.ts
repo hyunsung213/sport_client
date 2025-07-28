@@ -25,7 +25,7 @@ export function getLevelFromRate(rateValue?: number | null): string {
 // 평균 rate를 계산해주는 함수
 export function calculateTeamLevel(rate1: number, rate2: number) {
   if (rate1 < 500 || rate2 < 500) {
-    return null;
+    return "뉴비";
   }
   const average = Math.round((rate1 + rate2) / 2);
   return average;

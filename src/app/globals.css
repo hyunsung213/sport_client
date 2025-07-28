@@ -110,6 +110,31 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+.fade-mask {
+  -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* tailwind 기반 커스텀 유틸리티 (예: globals.css 또는 app.css) */
+.underline-indicator {
+  position: relative;
+}
+
+/* 게임 있는 날짜 하이라이트용 밑줄 */
+.underline-indicator::after {
+  content: "";
+  display: block;
+  width: 70%;
+  height: 2px;
+  margin: 2px auto 0;
+  background-color: #f97316; /* tailwind orange-500 */
+  border-radius: 2px;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
