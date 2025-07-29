@@ -2,8 +2,10 @@
 
 import { useAuth } from "@/context/AuthContext";
 import { googleLoginCallback } from "@/utils/auth/auth";
+import dynamic from "next/dynamic";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { Suspense } from "react";
 
 export default function GoogleCallbackPage() {
   const router = useRouter();
@@ -15,7 +17,11 @@ export default function GoogleCallbackPage() {
   useEffect(() => {
     const handleGoogleLogin = async () => {
       try {
-        const result = await googleLoginCallback(code!);
+        if (!code) {
+          console.error("❌ 구글 인증 코드가 없습니다");
+          return;
+        }
+        const result = await googleLoginCallback(code);
 
         if (result?.message === "구글 로그인 성공") {
           if (result.isNewUser) {
@@ -40,5 +46,10 @@ export default function GoogleCallbackPage() {
     }
   }, [code, router]);
 
-  return <p className="mt-10 text-center">구글 로그인 처리 중...</p>;
+  return (
+    <Suspense>
+      {" "}
+      <p className="mt-10 text-center">구글 로그인 처리 중...</p>
+    </Suspense>
+  );
 }

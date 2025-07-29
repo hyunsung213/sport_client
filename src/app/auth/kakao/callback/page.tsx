@@ -3,7 +3,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { kakaoLoginCallback } from "@/utils/auth/auth";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 
 export default function KakaoCallbackPage() {
   const router = useRouter();
@@ -40,5 +40,9 @@ export default function KakaoCallbackPage() {
     }
   }, [code, router]);
 
-  return <p className="mt-10 text-center">카카오 로그인 처리 중...</p>;
+  return (
+    <Suspense>
+      <p className="mt-10 text-center">카카오 로그인 처리 중...</p>
+    </Suspense>
+  );
 }
