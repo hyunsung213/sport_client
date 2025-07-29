@@ -84,9 +84,16 @@ export default function RateCard({ users }: { users: UserDetail[] }) {
                 innerRadius={60}
                 isAnimationActive={false}
                 className="pointer-events-none"
-                label={({ name, percent, value }) =>
-                  value > 0 ? `${name} ${(percent * 100).toFixed(0)}%` : ""
-                }
+                label={({ name, percent, value }) => {
+                  if (
+                    value !== undefined &&
+                    percent !== undefined &&
+                    value > 0
+                  ) {
+                    return `${name} ${(percent * 100).toFixed(0)}%`;
+                  }
+                  return "";
+                }}
                 labelLine={false}
               >
                 {pieData.map((entry, index) => (
